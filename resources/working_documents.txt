@@ -9,3 +9,5 @@ https://docs.google.com/document/d/1reMJc0hqNJI6XolF9Tqv5AyiM4OtfrVX0OkXtpqooiY/
 To Do List: 
 https://docs.google.com/document/d/1w_RF9eSmWL2TzfyN1b15G8N5NKFWWUqiL0UjiKDQMmw/edit?tab=t.0
 
+Guide to IRC:
+https://reactive.so/post/42-a-comprehensive-guide-to-ft_irc/
