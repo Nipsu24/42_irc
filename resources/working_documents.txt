@@ -3,11 +3,5 @@ LINKS TO WORKING DOCS
 Collection of useful resources: 
 https://docs.google.com/document/d/1ztHqq82oH7XMGh1dneW4bIfGg7KqcTz1KhJf3bqNRQA/edit?tab=t.0 
 
-Team Work Split: 
-https://docs.google.com/document/d/1reMJc0hqNJI6XolF9Tqv5AyiM4OtfrVX0OkXtpqooiY/edit?tab=t.0#heading=h.w3zpneu5t3t0 
-
 To Do List: 
 https://docs.google.com/document/d/1w_RF9eSmWL2TzfyN1b15G8N5NKFWWUqiL0UjiKDQMmw/edit?tab=t.0
-
-Guide to IRC:
-https://reactive.so/post/42-a-comprehensive-guide-to-ft_irc/
