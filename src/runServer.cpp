@@ -10,12 +10,12 @@
 
 
 
-void broadcastMessage(const std::vector<Client>& clients, const char* message, int sender_fd) {
-	for (const auto& client : clients) {
-		if (client.fd != sender_fd) {
-			send(client.fd, message, strlen(message), 0);
-		}
-	}
+void broadcastMessage(const std::vector<Client*>& clients, const char* message, int sender_fd) {
+	for (Client* client : clients) {
+        if (client->getFd() != sender_fd) {
+            send(client->getFd(), message, strlen(message), 0);
+        }
+    }
 }
 
 
@@ -63,7 +63,7 @@ void Server::runServer()
 	std::cout << "Server is listening on port " << getPort() << "..." << std::endl;
 
 	// Set up a list of clients
-	std::vector<Client> clients;
+	//std::vector<Client> clients;
 
 	// Use poll to handle multiple connections (non-blocking)
 	while (true) {
@@ -72,8 +72,8 @@ void Server::runServer()
 		fds.push_back({server_fd, POLLIN, 0}); // Monitor the server socket
 
 		// Add all connected clients to poll list
-		for (const auto& client : clients) {
-			fds.push_back({client.fd, POLLIN, 0});
+		for (const auto& client : _clients) {
+			fds.push_back({client->getFd(), POLLIN, 0});
 		}
 
 		// Wait for events (blocking)
@@ -96,7 +96,7 @@ void Server::runServer()
 			std::cout << "New client connected." << std::endl;
 
 			// Add the new client to the list
-			clients.push_back(Client{client_fd, client_addr});
+			_clients.push_back(new Client(client_fd, client_addr));
 		}
 
 		// Check for events on each client socket (messages)
@@ -108,21 +108,21 @@ void Server::runServer()
 					// Client disconnected or error
 					std::cout << "Client disconnected." << std::endl;
 					close(fds[i].fd);
-					clients.erase(clients.begin() + i - 1);
+					_clients.erase(_clients.begin() + i - 1);
 					--i;
 				} else {
 					// Null-terminate and broadcast the message to other clients
 					buffer[bytes_read] = '\0';
 					std::cout << "Received: " << buffer << std::endl;
-					broadcastMessage(clients, buffer, fds[i].fd);
+					broadcastMessage(_clients, buffer, fds[i].fd);
 				}
 			}
 		}
 	}
 
 	// Close all client sockets and the server socket
-	for (const auto& client : clients) {
-		close(client.fd);
+	for (const auto& client : _clients) {
+		close(client->getFd());
 	}
 	close(server_fd);
 }
