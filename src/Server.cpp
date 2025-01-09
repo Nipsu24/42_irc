@@ -50,12 +50,16 @@ std::string Server::getPassword() const {
 	return _passwd;
 }
 
-/*void broadcastMessage(const std::vector<Client>& clients, const char* message, int sender_fd) {
-	for (const auto& client : clients) {
-		if (client.fd != sender_fd) {
-			send(client.fd, message, strlen(message), 0);
+void Server::addClient(Client* client) {
+	_clients.push_back(client);
+}
+
+void Server::removeClient(int fd) {
+	for (auto it = _clients.begin(); it != _clients.end(); ++it) {
+		if ((*it)->getFd() == fd) {
+			delete *it;  // Clean up memory
+			_clients.erase(it);  // Remove from vector
+			break;
 		}
 	}
-}*/
-
-
+}

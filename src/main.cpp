@@ -14,13 +14,6 @@
 
 
 #include <iostream>
-
-#include <cstring>
-#include <vector>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <poll.h>
 #include <string>
 #include "Server.hpp"
 
@@ -40,9 +33,11 @@ int	printErrorMessage(int errorFlag)
 
 int main(int argc, char **argv) {
 
+	(void) argv;
 	if (argc != 3)
 		return (printErrorMessage(0));
-    Server server(std::stoi(argv[1]), argv[2]);
+
+	Server server(std::stoi(argv[1]), argv[2]);
 
     try
 	{

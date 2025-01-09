@@ -4,15 +4,13 @@
 
 
 #include <string>
-#include <netinet/in.h> 
+#include <netinet/in.h>
+#include <vector> 
+#include "Client.hpp"
 
 const int BUFFER_SIZE = 1024;
 const int MAX_CLIENTS = 10;
 
-struct Client {
-    int fd;
-    sockaddr_in addr;
-};
 
 
 class Server
@@ -32,12 +30,17 @@ class Server
 
 		void runServer();
 
+		void addClient(Client* client);
+    	void removeClient(int fd);
+
 
 
 	private:
 	
 		int _port;
 		std::string _passwd;
+		std::vector <Client*> _clients;
+
 		
 
 };
