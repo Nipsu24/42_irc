@@ -8,121 +8,137 @@
 #include <poll.h>
 #include <system_error>
 
+int Server::createServerSocket()
+{
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd == -1)
+    {
+        throw std::runtime_error("Socket operation failed: Connection refused");
+    }
 
+    // Set socket options (SO_REUSEADDR)
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+    {
+        close(server_fd);
+        throw std::system_error(errno, std::generic_category(), "setsockopt failed: Unable to set SO_REUSEADDR");
+    }
+    return server_fd;
+}
 
-void broadcastMessage(const std::vector<Client*>& clients, const char* message, int sender_fd) {
-	for (Client* client : clients) {
-        if (client->getFd() != sender_fd) {
-            send(client->getFd(), message, strlen(message), 0);
+void Server::bindAndListen(int server_fd)
+{
+    sockaddr_in server_addr = {};
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(_port);
+
+    if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+    {
+        perror("Bind failed");
+        close(server_fd);
+        throw std::system_error(errno, std::generic_category(), "Failed to bind socket");
+    }
+
+    if (listen(server_fd, MAX_CLIENTS) == -1)
+    {
+        close(server_fd);
+        throw std::system_error(errno, std::generic_category(), "Listen failed");
+    }
+
+    std::cout << "Server is listening on port " << _port << "..." << std::endl;
+}
+
+void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
+{
+    sockaddr_in client_addr = {};
+    socklen_t client_len = sizeof(client_addr);
+    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
+    if (client_fd == -1)
+    {
+        perror("Accept failed");
+        return;
+    }
+
+    std::cout << "New client connected." << std::endl;
+    _clients.push_back(new Client(client_fd, client_addr));
+}
+
+void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *> &_clients)
+{
+    for (size_t i = 1; i < fds.size(); ++i)
+    {
+        if (fds[i].revents & POLLIN)
+        {
+            char buffer[BUFFER_SIZE];
+            ssize_t bytes_read = recv(fds[i].fd, buffer, BUFFER_SIZE - 1, 0);
+            if (bytes_read <= 0)
+            {
+                // Client disconnected or error
+                std::cout << "Client disconnected." << std::endl;
+                close(fds[i].fd);
+                _clients.erase(_clients.begin() + i - 1);
+                --i;
+            }
+            else
+            {
+                // Null-terminate and process the received message
+                buffer[bytes_read] = '\0';
+                // std::cout << "Buffer: " << buffer << std::endl;
+                std::string message(buffer);
+                MessageClientToServer(*_clients[i - 1], message);
+            }
         }
     }
 }
 
-
+void Server::cleanupResources(int server_fd, std::vector<Client *> &_clients)
+{
+    for (auto &client : _clients)
+    {
+        close(client->getFd());
+        delete client; // Don't forget to delete the Client object if you're using raw pointers
+    }
+    close(server_fd);
+}
 
 void Server::runServer()
 {
-	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (server_fd == -1) {
-		throw std::runtime_error("Socket operation failed: Connection refused");
-	}
+    // Create and configure server socket
+    int server_fd = createServerSocket();
+    bindAndListen(server_fd);
 
-	/*The setsockopt function is used to set options for a socket. In your code, it sets the SO_REUSEADDR option, 
-	which allows a socket to bind to an address that is in the TIME_WAIT state or is otherwise considered unavailable for reuse.
-	- &opt: A pointer to the value to set the option (1 typically means enable the option)*/
+    std::vector<struct pollfd> fds;
+    std::vector<Client *> _clients;
 
-	int opt = 1;
-	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
-	close(server_fd);
-	throw std::system_error(errno, std::generic_category(), "setsockopt failed: Unable to set SO_REUSEADDR");
-	}
+    // Main event loop
+    while (true)
+    {
+        // Set up the poll structure
+        fds.clear();
+        fds.push_back({server_fd, POLLIN, 0}); // Monitor the server socket
 
+        // Add all client sockets to the poll list
+        for (const auto &client : _clients)
+        {
+            fds.push_back({client->getFd(), POLLIN, 0});
+        }
 
-	// Set up the server address structure
-	sockaddr_in server_addr = {};
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = INADDR_ANY;
-	server_addr.sin_port = htons(_port);
+        int poll_result = poll(fds.data(), fds.size(), -1);
+        if (poll_result == -1)
+        {
+            perror("Poll failed");
+            break;
+        }
 
-	/*
-	The bind function in socket programming is used to assign a specific address (IP and port) to a socket. 
-	This is a critical step when creating a server, as it determines where the server will listen for incoming connections.*/
+        // Check for events on the server socket (new connection)
+        if (fds[0].revents & POLLIN)
+        {
+            handleNewClient(server_fd, _clients);
+        }
+        handleEvents(fds, _clients);
+    }
 
-	if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
-		perror("Bind failed");
-		close(server_fd);
-		throw std::system_error(errno, std::generic_category(), "Failed to bind socket");
-	}
-
-	// Start listening for incoming connections
-	if (listen(server_fd, MAX_CLIENTS) == -1) {
-	close(server_fd);
-	throw std::system_error(errno, std::generic_category(), "Listen failed");
-	}
-
-	std::cout << "Server is listening on port " << getPort() << "..." << std::endl;
-
-	// Set up a list of clients
-	//std::vector<Client> clients;
-
-	// Use poll to handle multiple connections (non-blocking)
-	while (true) {
-		// Set up the poll structure
-		std::vector<struct pollfd> fds;
-		fds.push_back({server_fd, POLLIN, 0}); // Monitor the server socket
-
-		// Add all connected clients to poll list
-		for (const auto& client : _clients) {
-			fds.push_back({client->getFd(), POLLIN, 0});
-		}
-
-		// Wait for events (blocking)
-		int poll_result = poll(fds.data(), fds.size(), -1); // Timeout of -1 means blocking indefinitely
-		if (poll_result == -1) {
-			perror("Poll failed");
-			break;
-		}
-
-		// Check for events on the server socket (new connection)
-		if (fds[0].revents & POLLIN) {
-			sockaddr_in client_addr = {};
-			socklen_t client_len = sizeof(client_addr);
-			int client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
-			if (client_fd == -1) {
-				perror("Accept failed");
-				continue;
-			}
-
-			std::cout << "New client connected." << std::endl;
-
-			// Add the new client to the list
-			_clients.push_back(new Client(client_fd, client_addr));
-		}
-
-		// Check for events on each client socket (messages)
-		for (size_t i = 1; i < fds.size(); ++i) {
-			if (fds[i].revents & POLLIN) {
-				char buffer[BUFFER_SIZE];
-				ssize_t bytes_read = recv(fds[i].fd, buffer, BUFFER_SIZE - 1, 0);
-				if (bytes_read <= 0) {
-					// Client disconnected or error
-					std::cout << "Client disconnected." << std::endl;
-					close(fds[i].fd);
-					_clients.erase(_clients.begin() + i - 1);
-					--i;
-				} else {
-					// Null-terminate and broadcast the message to other clients
-					buffer[bytes_read] = '\0';
-					std::cout << "Received: " << buffer << std::endl;
-					broadcastMessage(_clients, buffer, fds[i].fd);
-				}
-			}
-		}
-	}
-
-	// Close all client sockets and the server socket
-	for (const auto& client : _clients) {
-		close(client->getFd());
-	}
-	close(server_fd);
+    // Clean up and close all resources
+    cleanupResources(server_fd, _clients);
 }
