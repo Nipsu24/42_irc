@@ -64,8 +64,9 @@ void	Channel::printMode() const {
 		std::cout << "No mode set for " << _channelName << std::endl;
 	else {
 		std::string result;
-		for (int i = 0; i < _modes.size(); ++i)
-			result += _modes[i];
+		result += _modes[0];
+		for (int i = 1; i < _modes.size(); ++i)
+			result += _modes[i][1];
 		std::cout << "mode/#" << _channelName << " [" << result << "]" << std::endl;
 	}
 }
@@ -86,7 +87,7 @@ void	Channel::setMode(const std::vector<std::string> newModes) {
 			_modes.push_back(toAddMode);
 	}
 	std::sort(_modes.begin(), _modes.end());
-	std::cout << "mode/#" << _channelName << " [" << _modes << "] by INSERT USERNAME" << std::endl;
+	std::cout << "mode/#" << _channelName << " [" << _modes << "] by INSERT USERNAME" << std::endl; //still needs to be adjusted, only print added modes
 }
 
 /*Prints topic of the channel in case it's set, otherwise prints respective hint.*/
