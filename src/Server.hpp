@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <vector> 
 #include "Client.hpp"
+#include "Channel.hpp"
 
 const int BUFFER_SIZE = 1024;
 const int MAX_CLIENTS = 10;
@@ -32,14 +33,14 @@ class Server
 
 		void addClient(Client* client);
     	void removeClient(int fd);
-
-
+		void joinChannel(Client* client, std::string channelName); //handles join and create
 
 	private:
 	
 		int _port;
 		std::string _passwd;
 		std::vector <Client*> _clients;
+		std::vector <Channel*> _channels;
 
 		
 

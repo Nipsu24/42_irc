@@ -32,7 +32,14 @@ Server& Server::operator=(const Server& other) {
 	return *this;
 }
 
-Server::~Server() {}
+/*Destructor frees dynamically allocated channels. Uses '.clear'
+  at the end to avoid dangling pointers.*/
+Server::~Server() {
+	for (Channel* channel : _channels) {
+		delete channel;
+	}
+	_channels.clear();
+}
 
 void Server::setPort(int value) {
 	_port = value;
@@ -62,4 +69,25 @@ void Server::removeClient(int fd) {
 			break;
 		}
 	}
+}
+
+/*Adds user(client) to a channel or creates new channel in case channel is not yet existing.
+  First checks if channel name already exists in vector array of _channels. If this
+  is the case, adds client to the channel. Otherwise creates pointer to a new channel
+  via 'new' (to ensure that class will exist further on and not go out of scope when
+  function terminates). Respective memory is freed again in destructor of server channel*/
+void	Server::joinChannel(Client* client, std::string channelName) {
+	bool	channelExists = false;
+	for (Channel* availableChannels : _channels) {
+		if (channelName == availableChannels->getChannelName()) {
+			availableChannels->addClient(client);
+			channelExists = true;
+			break;
+		}
+	}
+	if (channelExists == false) {
+		Channel* newChannel = new Channel(channelName);
+		newChannel->addClient(client);
+		_channels.push_back(newChannel);
+    }
 }
