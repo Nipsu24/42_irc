@@ -11,8 +11,6 @@
 /* **************************************************************************************** */
 
 #pragma once
-// #ifndef CHANNEL_HPP
-// #define CHANNEL_HPP
 
 #include <string>
 #include <vector>
@@ -34,10 +32,8 @@ public:
 	void						setMode(const std::vector<std::string>& newModes);
 	void						printTopic() const;
 	void						setTopic(const std::string& topic);
-	// void						printUsers() const; dependend function getUserNickname still to be set up in Client Class
+	void						printUsers() const;
 	std::vector<Client*>&		getUsers();
-	// std::vector<Client*>			getChOperators() const;
-	// void						setChOperators(Client ChOperator);
 	void						executeMode();
 	void						addClient(Client* client);
 
@@ -47,12 +43,14 @@ private:
 	std::string					_parsedChannelPassw; //to be filled with characters found after /mode +k
 	std::vector<std::string>	_modes; // no default set at channel creation
 	std::vector<Client*>		_userList;
-	// std::vector<Client*>			_chOperatorList;
+	std::vector<Client*>		_chOperatorList;
 	std::string					_topic; //empty if not set
 	int							_userLimit; // -1 if not set
 	int							_parsedUserLimit; // to be filled with number found after /mode +l
 	bool						_topicOperatorsOnly; // false by default, needs +t mode
 	bool						_inviteOnlyEnabled; // false by default, needs +i mode
+	std::vector<Client*>		_removeOperatorsList; // needs to be populated by parsing, set empty if not applicable
+	std::vector<Client*>		_addOperatorsList; //  needs to be populated by parsing, set empty if not applicable
 };
 
 // #endif

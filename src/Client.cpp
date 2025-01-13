@@ -29,3 +29,5 @@ int Client::getFd() const {
 sockaddr_in Client::getAddr() const {
 	return _addr;
 }
+
+std::string	Client::getNick() const {return _nickname;}

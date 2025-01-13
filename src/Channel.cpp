@@ -36,13 +36,13 @@ std::vector<Client*>&	Channel::getUsers() {
 	return (_userList);
 }
 
-/* function getUserNickname still to be set up in Client Class
+/* function getUserNickname still to be set up in Client Class*/
 void	Channel::printUsers() const {
 	for (Client* memberOfChannel : _userList) {
-		std::cout << "[" << memberOfChannel->getUserNickname() << std::endl; 
+		std::cout << "[" << memberOfChannel->getNick() << std::endl; 
 	}
 }
-*/
+
 
 /*Returns the channel name of respective channel class*/
 std::string	Channel::getChannelName() const {return _channelName;}
@@ -114,15 +114,16 @@ void	Channel::setMode(const std::vector<std::string>& newModes) {
 	executeMode();
 }
 
-/*Fuunction for executing set modes of a channel, used in setMode function, 
-  sets first every relevant value to initial value and popuates afterwards if applicable
-  -o MODE STILL TBD.*/
+/*Function for executing set modes of a channel, used in setMode function. First, sets all
+  relevant values to initial values and popuates afterwards if applicable (if i, t, k, l are present).
+  Then checks if any operator should be added/removed to the _chOperatorList (handles +/- o mode).*/
 void	Channel::executeMode() {
 	_inviteOnlyEnabled = false;
 	_topicOperatorsOnly = false;
 	_channelPassw = "";
 	_userLimit = -1;
 
+	bool	toAddOperatorFound = false;
 	for (const std::string& activeMode : _modes) {
 		if (activeMode[1] == 'i')
 			_inviteOnlyEnabled = true;
@@ -133,14 +134,35 @@ void	Channel::executeMode() {
 		if (activeMode[1] == 'l')
 			_parsedUserLimit = _userLimit;
 	}
+	if (!_addOperatorsList.empty()) {
+		for(Client* toAddOperator : _addOperatorsList) {
+				toAddOperatorFound = false;
+				for(Client* currentOperator : _chOperatorList) {
+					if (toAddOperator->getNick() == currentOperator->getNick())
+						toAddOperatorFound = true;
+				}
+			if (toAddOperatorFound == false)
+				_chOperatorList.push_back(toAddOperator);
+		}
+	}
+	if (!_removeOperatorsList.empty()) {
+		for(Client* toRemoveOperator : _removeOperatorsList) {
+			auto it = std::find_if(_chOperatorList.begin(), _chOperatorList.end(), [&](Client* user) { 
+				return user == toRemoveOperator;});
+			if (it != _chOperatorList.end()) {
+				_chOperatorList.erase(it);
+			}
+		}
+	}
 }
+
 /*Prints topic of the channel in case it's set, otherwise prints respective hint.*/
 void	Channel::printTopic() const {
 	if (_topic.empty()) {
 		std::cout << "No topic set for #" << _channelName << std::endl;
 		return ;
 	}
-	std::cout << "Topic for " << _channelName << ": " << _topic << std::endl;
+	std::cout << "Topic for #" << _channelName << ": " << _topic << std::endl;
 }
 
 /*Sets topic of the channel and prints respective message*/
@@ -151,14 +173,11 @@ void	Channel::setTopic(const std::string& topic) {
 	}
 }
 
-
 /*Adds new client to the channel by adding it to the vector array of clients.
   Used in joinChannel function in server.cpp*/
 void	Channel::addClient(Client* client) {
     _userList.push_back(client);
 }
-
-//Further functions TBD//
 
 // int	main(void)
 // {

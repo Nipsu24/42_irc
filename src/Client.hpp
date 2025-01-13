@@ -12,13 +12,16 @@ public:
     Client& operator=(const Client& other);
     ~Client();
 
-    void setFd(int value);
-    int getFd() const;
-	sockaddr_in getAddr() const;
+    void		setFd(int value);
+    int			getFd() const;
+	sockaddr_in	getAddr() const;
+	std::string	getNick() const;
 
 private:
-    int _fd;
-	sockaddr_in _addr;
+    int			_fd;
+	sockaddr_in	_addr;
+	std::string	_nickname;
+
 };
 
 
