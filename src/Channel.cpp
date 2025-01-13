@@ -17,7 +17,7 @@
 Channel::Channel() {}
 
 Channel::Channel(std::string name) 
-		: _channelName(name), _userLimit(-1), _channelPassw(""), _topicCommandEnabled(false), _inviteOnlyEnabled(false) {}
+		: _channelName(name), _userLimit(-1), _channelPassw(""), _topicOperatorsOnly(false), _inviteOnlyEnabled(false) {}
 
 Channel::Channel(const Channel& other) {
     this->_channelName = other._channelName;
@@ -36,6 +36,15 @@ std::vector<Client*>&	Channel::getUsers() {
 	return (_userList);
 }
 
+/* function getUserNickname still to be set up in Client Class
+void	Channel::printUsers() const {
+	for (Client* memberOfChannel : _userList) {
+		std::cout << "[" << memberOfChannel->getUserNickname() << std::endl; 
+	}
+}
+*/
+
+/*Returns the channel name of respective channel class*/
 std::string	Channel::getChannelName() const {return _channelName;}
 
 /*Returns empty string in case no password set, otherwise returns channel password.*/
@@ -62,8 +71,11 @@ void	Channel::printMode() const {
 }
 
 /*Compares elements of _modes vector with passed newModes vector and adds the elements from 
-  newModes vector to _modes vector in case they are not yet present. Sorts vector alphabethically.
-  Prints at the end the respective modes set to the channel.*/
+  newModes vector to _modes vector in case they are not yet present or removes elements in
+  case they have '-' prefix. This is done with erase method which requires index which in turn
+  is retrieved with help of find_if and lambda function. In case modes.end is returned this means
+  no match has been found. Sorts vector alphabethically. Prints at the end the respective modes 
+  set to the channel.*/
 void	Channel::setMode(const std::vector<std::string>& newModes) {
 	std::string	result;
 	for (std::string toAddMode : newModes) {
@@ -102,16 +114,24 @@ void	Channel::setMode(const std::vector<std::string>& newModes) {
 	executeMode();
 }
 
-/*First draft of function for executing set modes of a channel, used in
-  setMode function, logic still to be further defined.*/
+/*Fuunction for executing set modes of a channel, used in setMode function, 
+  sets first every relevant value to initial value and popuates afterwards if applicable
+  -o MODE STILL TBD.*/
 void	Channel::executeMode() {
 	_inviteOnlyEnabled = false;
 	_topicOperatorsOnly = false;
+	_channelPassw = "";
+	_userLimit = -1;
+
 	for (const std::string& activeMode : _modes) {
 		if (activeMode[1] == 'i')
 			_inviteOnlyEnabled = true;
 		if (activeMode[1] == 't')
 			_topicOperatorsOnly = true;
+		if (activeMode[1] == 'k')
+			_channelPassw = _parsedChannelPassw;
+		if (activeMode[1] == 'l')
+			_parsedUserLimit = _userLimit;
 	}
 }
 /*Prints topic of the channel in case it's set, otherwise prints respective hint.*/
@@ -131,13 +151,6 @@ void	Channel::setTopic(const std::string& topic) {
 	}
 }
 
-/*Sets a limit to the number of users in a group and adds '+l' to _modes.*/
-void	Channel::setUserLimit(int limit){
-	_userLimit = limit;
-	std::cout << "mode/#" << _channelName << " [+l" << limit << "]" << " by INSERT USERNAME" << std::endl;
-	_modes.push_back("+l");
-	std::sort(_modes.begin(), _modes.end());
-}
 
 /*Adds new client to the channel by adding it to the vector array of clients.
   Used in joinChannel function in server.cpp*/
