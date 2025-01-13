@@ -160,23 +160,23 @@ void	Channel::addClient(Client* client) {
 
 //Further functions TBD//
 
-int	main(void)
-{
-	Channel	channel("firstCh");
-	std::vector<std::string>	newModes = {"+i", "+c"};
-	std::vector<std::string>	newModes2 = {"+i", "+n"};
-	std::vector<std::string>	newModes3 = {"+i", "-n"};
-	std::cout << channel.getChannelName() << std::endl;
-	std::cout << channel.getChannelPassw() << std::endl;
-	channel.printMode();
-	channel.setMode(newModes);
-	channel.printMode();
-	channel.setMode(newModes2);
-	channel.printMode();
-	channel.setMode(newModes3);
-	channel.printMode();
-	channel.printTopic();
-	channel.setTopic("Potatoes");
-	channel.printTopic();
-	return (0);
-}
+// int	main(void)
+// {
+// 	Channel	channel("firstCh");
+// 	std::vector<std::string>	newModes = {"+i", "+c"};
+// 	std::vector<std::string>	newModes2 = {"+i", "+n"};
+// 	std::vector<std::string>	newModes3 = {"+i", "-n"};
+// 	std::cout << channel.getChannelName() << std::endl;
+// 	std::cout << channel.getChannelPassw() << std::endl;
+// 	channel.printMode();
+// 	channel.setMode(newModes);
+// 	channel.printMode();
+// 	channel.setMode(newModes2);
+// 	channel.printMode();
+// 	channel.setMode(newModes3);
+// 	channel.printMode();
+// 	channel.printTopic();
+// 	channel.setTopic("Potatoes");
+// 	channel.printTopic();
+// 	return (0);
+// }
