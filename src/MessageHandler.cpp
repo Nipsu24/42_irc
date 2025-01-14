@@ -5,8 +5,12 @@
 #include <poll.h>
 #include <unistd.h>
 #include <string_view>
+#include <regex>
+#include <vector>
 
-// Function to handle the server's response to the client
+/*
+ * Handle events on the server
+ */
 void Server::MessageServerToClient(Client client, const std::string &message)
 {
     std::string formattedMessage = message + "\r\n"; // IRC message format
@@ -16,96 +20,113 @@ void Server::MessageServerToClient(Client client, const std::string &message)
     }
 }
 
-// A sample MessageClientToServer function that processes the client's message
+/*
+ * Handle messages from the client
+ */
 void Server::MessageClientToServer(Client &client, const std::string &message)
 {
-    // Split the message by spaces
-
-    // // Check if the message is a CAP LS message
-    if (startswith(message, "CAP LS"))
+    std::vector<std::string> tokens = SplitString(message);
+    if (tokens.size() < 1)
     {
-        std::cout << "Handling CAP LS message" << std::endl;
-        HandleCAPLS(client, message);
+        std::cerr << "Invalid message" << std::endl;
+        return;
     }
-    else if (startswith(message, "USER"))
+    int i = 0;
+    for (auto &token : tokens)
     {
-        std::cout << "Handling USER message" << std::endl;
-        handleUserName(client, message);
-    }
-
-    else if (startswith(message, "CAP REQ"))
-    {
-        std::cout << "Handling CAP REQ message" << std::endl;
-        handleCapReq(client, message);
-    }
-    else
-    {
-        std::cout << "test" << std::endl;
-        // Handle other messages here
+        std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
+        if (token == "CAP")
+            HandleCAPLS(client, tokens, i);
+        else if (token == "USER")
+            handleUserName(client, tokens, i);
+        else if (token == "JOIN")
+            handleJoin(client, tokens, i);
+        else if (token == "PRIVMSG")
+            handlePrivmsg(client, tokens, i);
+        else if (token == "NICK")
+            handleNick(client, tokens, i);
+        i++;
     }
 }
 
-// A simple function to split a string by spaces
-std::vector<std::string> Server::SplitString(const std::string &str, char delimiter)
+/*
+ * Split a string by a delimiter
+ */
+std::vector<std::string> Server::SplitString(const std::string &str)
 {
     std::vector<std::string> tokens;
-    std::string token;
-    std::istringstream tokenStream(str);
+    std::regex re("\\s+");
+    std::sregex_token_iterator it(str.begin(), str.end(), re, -1);
+    std::sregex_token_iterator end;
 
-    while (std::getline(tokenStream, token, delimiter))
+    while (it != end)
     {
-        tokens.push_back(token);
+        if (!it->str().empty()) // To avoid adding empty strings
+        {
+            tokens.push_back(*it);
+        }
+        ++it;
     }
-
     return tokens;
 }
 
-bool Server::startswith(const std::string &str, const std::string &cmp)
+/*
+ * Handle the CAP LS message
+ */
+void Server::HandleCAPLS(Client &client, std::vector<std::string> tokens, int index)
 {
-    return str.compare(0, cmp.length(), cmp) == 0;
-}
-// Function to handle the CAP LS message
-void Server::HandleCAPLS(Client &client, const std::string &message)
-{
-    // Find the position of "NAME" in the message
-    size_t namePos = message.find("NICK");
-    if (namePos != std::string::npos)
+    std::string response;
+    if (tokens[index + 1] == "LS")
     {
-        size_t startPos = namePos + 5; // 5 is the length of "NAME "
-        size_t endPos = message.find(' ', startPos);
-        std::string clientName = message.substr(startPos, endPos - startPos);
-
-        // Assign the extracted name to the client's name
-        client.setNick(clientName);
-        std::cout << "Client" << client.getFd() << " name set to: " << client.getNick() << std::endl;
+        client.setState(REGISTERING);
+        std::cout << "Received CAP LS from client" << client.getFd() << ": " << client.getNick() << std::endl; // Debugging
+        response = "CAP * LS";
+        MessageServerToClient(client, response);
     }
-
-    // client.cap_status = true; // Set the client's CAP status to true
-
-    // Send the CAP LS response to the client
+    else if (tokens[index + 1] == "END")
+    {
+        response = ":001 " + client.getNick() + ":Welcome to the Internet Relay Network " + client.getNick();
+        MessageServerToClient(client, response);
+    }
+    else
+    {
+        std::cerr << "Invalid CAP message" << std::endl;
+    }
 }
 
-void Server::handleUserName(Client &client, const std::string &message)
+/*
+ * Handle the USER message
+ */
+void Server::handleUserName(Client &client, std::vector<std::string> tokens, int index)
 {
-
-    std::cout << "test" << std::endl;
-    size_t namePos = message.find("USER");
-    if (namePos != std::string::npos)
-    {
-        size_t startPos = namePos + 5; // 5 is the length of "NAME "
-        size_t endPos = message.find(' ', startPos);
-        std::string username = message.substr(startPos, endPos - startPos);
-
-        // Assign the extracted name to the client's name
-        client.setUsername(username);
-        std::cout << "Client" << client.getFd() << " name set to: " << client.getNick() << std::endl;
-    }
-    std::string response = ":irc.example.com CAP * LS :account-notify extended-join multi-prefix sasl\r\n";
+    client.setNick(tokens[index + 1]);
+    std::cout << "Received USER from client" << client.getFd() << ": " << client.getNick() << std::endl;
+    std::string response = "001 " + client.getNick() + " :Welcome to the Internet Relay Network " + client.getNick();
     MessageServerToClient(client, response);
 }
 
-void Server::handleCapReq(Client &client, const std::string &message)
+void Server::handleNick(Client &client, std::vector<std::string> tokens, int index)
 {
-    std::cout << "Received CAP REQ from client" << client.getFd() << ": " << client.getNick() << std::endl;
-    std::cout << "Message: " << message << std::endl;
+    client.setNick(tokens[index + 1]);
+}
+
+void Server::handleJoin(Client &client, std::vector<std::string> tokens, int index)
+{
+    if (tokens[index + 2] == "")
+    {
+        MessageServerToClient(client, "\r\n");
+        return;
+    }
+    else
+    {
+        std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
+        std::string response = ":" + client.getNick() + " JOIN " + tokens[index + 2] + "\r\n";
+        MessageServerToClient(client, response);
+    }
+}
+
+void Server::handlePrivmsg(Client &client, std::vector<std::string> tokens, int index)
+{
+    std::string response = ":" + client.getNick() + " PRIVMSG " + tokens[index + 1] + " :" + tokens[index + 2] + "\r\n";
+    MessageServerToClient(client, response);
 }

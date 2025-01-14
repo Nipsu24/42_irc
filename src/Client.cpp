@@ -55,3 +55,13 @@ std::string Client::getUsername() const
 {
     return _username;
 }
+
+void Client::setState(clientState state)
+{
+    _state = state;
+}
+
+clientState Client::getState() const
+{
+    return static_cast<clientState>(_state);
+}

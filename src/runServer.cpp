@@ -8,6 +8,9 @@
 #include <poll.h>
 #include <system_error>
 
+/*
+    * Create a server socket
+*/
 int Server::createServerSocket()
 {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -26,6 +29,9 @@ int Server::createServerSocket()
     return server_fd;
 }
 
+/*
+    * Bind and listen on the server socket
+*/
 void Server::bindAndListen(int server_fd)
 {
     sockaddr_in server_addr = {};
@@ -49,6 +55,9 @@ void Server::bindAndListen(int server_fd)
     std::cout << "Server is listening on port " << _port << "..." << std::endl;
 }
 
+/*
+    * Handle a new client connection
+*/
 void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
 {
     sockaddr_in client_addr = {};
@@ -62,8 +71,12 @@ void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
 
     std::cout << "New client connected." << std::endl;
     _clients.push_back(new Client(client_fd, client_addr));
+    _clients.back()->setState(REGISTERING);
 }
 
+/*
+    * Handle events on the server socket and client sockets
+*/
 void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *> &_clients)
 {
     for (size_t i = 1; i < fds.size(); ++i)
@@ -84,7 +97,7 @@ void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *>
             {
                 // Null-terminate and process the received message
                 buffer[bytes_read] = '\0';
-                // std::cout << "Buffer: " << buffer << std::endl;
+                //std::cout << "Buffer: " << buffer << std::endl;
                 std::string message(buffer);
                 MessageClientToServer(*_clients[i - 1], message);
             }
