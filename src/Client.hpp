@@ -27,6 +27,7 @@ public:
     void setUsername(const std::string &value);
     std::string getUsername() const;
     sockaddr_in getAddr() const;
+    std::string getNick() const;
     void setState(clientState state);
     clientState getState() const;
 
@@ -38,4 +39,5 @@ private:
     sockaddr_in _addr;
     std::string _nick;
     std::string _username;
+    std::string _nickname;
 };
