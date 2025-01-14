@@ -29,12 +29,12 @@ public:
 
 	void addClient(Client *client);
 	void removeClient(int fd);
-
+	void joinChannel(Client *client, std::string channelName); // handles join and create
 private:
 	int _port = 6667; // Example port
 	std::string _passwd;
 	std::vector<Client *> _clients;
-
+	std::vector<Channel *> _channels;
 	void HandleCAPLS(Client &client, std::vector<std::string> tokens, int index);
 	void MessageServerToClient(Client client, const std::string &message);
 	std::vector<std::string> SplitString(const std::string &str);
@@ -53,15 +53,3 @@ private:
 	void handlePrivmsg(Client &client, std::vector<std::string> tokens, int index);
 	void handleNick(Client &client, std::vector<std::string> tokens, int index);
 };
-
-void addClient(Client *client);
-void removeClient(int fd);
-void joinChannel(Client *client, std::string channelName); // handles join and create
-
-private:
-int _port;
-std::string _passwd;
-std::vector<Client *> _clients;
-std::vector<Channel *> _channels;
-}
-;
