@@ -99,7 +99,7 @@ void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *>
                 buffer[bytes_read] = '\0';
                 //std::cout << "Buffer: " << buffer << std::endl;
                 std::string message(buffer);
-                MessageClientToServer(*_clients[i - 1], message);
+                handleClientMessage(*_clients[i - 1], message);
             }
         }
     }

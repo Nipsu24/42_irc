@@ -76,18 +76,4 @@ void Server::removeClient(int fd) {
   is the case, adds client to the channel. Otherwise creates pointer to a new channel
   via 'new' (to ensure that class will exist further on and not go out of scope when
   function terminates). Respective memory is freed again in destructor of server channel*/
-void	Server::joinChannel(Client* client, std::string channelName) {
-	bool	channelExists = false;
-	for (Channel* availableChannels : _channels) {
-		if (channelName == availableChannels->getChannelName()) {
-			availableChannels->addClient(client);
-			channelExists = true;
-			break;
-		}
-	}
-	if (channelExists == false) {
-		Channel* newChannel = new Channel(channelName);
-		newChannel->addClient(client);
-		_channels.push_back(newChannel);
-    }
-}
+

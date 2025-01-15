@@ -65,3 +65,12 @@ clientState Client::getState() const
 {
     return static_cast<clientState>(_state);
 }
+
+
+Channel* Client::getLoggedin() const {
+    return _loggedIn;
+}
+
+void Client::setLoggedin(Channel* channel) {
+    _loggedIn = channel;
+}

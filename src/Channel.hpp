@@ -16,6 +16,8 @@
 #include <vector>
 #include "Client.hpp"
 
+class Client;
+
 class Channel {
 public:
 	// Constructors
@@ -32,6 +34,7 @@ public:
 	void						setMode(const std::vector<std::string>& newModes);
 	void						printTopic() const;
 	void						setTopic(const std::string& topic);
+	void						setKick(Client* client, std::string kickedNick);
 	void						printUsers() const;
 	std::vector<Client*>&		getUsers();
 	void						executeMode();

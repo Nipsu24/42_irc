@@ -2,6 +2,7 @@
 
 #include <string>
 #include <netinet/in.h>
+#include "Channel.hpp"
 
 enum clientState
 {
@@ -9,6 +10,8 @@ enum clientState
     REGISTERED,
     DISCONNECTED
 };
+
+class Channel;
 
 class Client
 {
@@ -29,7 +32,8 @@ public:
     sockaddr_in getAddr() const;
     void setState(clientState state);
     clientState getState() const;
-
+    Channel* getLoggedin() const;
+    void setLoggedin(Channel* channel); 
     bool cap_status;
 
 private:
@@ -39,5 +43,5 @@ private:
     std::string _nick;
     std::string _username;
     std::string _nickname;
-    //Channel* _loggedIn;
+    Channel* _loggedIn;
 };
