@@ -19,12 +19,12 @@
 
 NAME = ircserv
 CC = c++
-FLAGS = -Wall -Wextra -Werror -std=c++11
+FLAGS = -Wall -Wextra -Werror -std=c++11 -fsanitize=address
 
 SRC_DIR = ./src
 OBJ_DIR = obj
 
-FILES = main.cpp Server.cpp Client.cpp runServer.cpp MessageHandler.cpp Channel.cpp
+FILES = main.cpp Server.cpp Client.cpp runServer.cpp messageHandler.cpp Channel.cpp handleCommands.cpp
 
 OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(FILES:.cpp=.o))
 
