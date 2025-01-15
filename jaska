@@ -1,0 +1,13 @@
+<< CAP LS
+<< NICK tim
+<< USER tsaari tsaari localhost :Timo Saari
+>> CAP * LS
+<< CAP END
+>> :@127.0.0.1 NICK :tim
+>> 001 tsaari_ :Welcome to the Internet Relay Network tsaari_
+<< MODE tsaari_ +i
+<< WHOIS tim
+>> :001 tsaari_:Welcome to the Internet Relay Network tsaari_
+<< PING localhost
+<< NICK jaska
+>> :tsaari@127.0.0.1 NICK :jaska
