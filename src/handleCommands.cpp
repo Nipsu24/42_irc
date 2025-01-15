@@ -41,6 +41,10 @@ void Server::handleUserName(Client &client, std::vector<std::string> tokens, int
 void Server::handleNick(Client &client, std::vector<std::string> tokens, int index)
 {
 	client.setNick(tokens[index + 1]);
+
+	//nick has to bbe more thaan three char
+	std::string response = ":" + client.getNick() + "!~" + client.getUsername() + "@127.0.0.1 NICK :" + client.getNick();
+	MessageServerToClient(client, response);
 }
 
 void Server::handleJoin(Client &client, std::vector<std::string> tokens, int index)
@@ -75,12 +79,6 @@ void Server::handleJoin(Client &client, std::vector<std::string> tokens, int ind
 		std::string response = ":" + client.getNick() + " JOIN " + channelName + "\r\n";
 		MessageServerToClient(client, response);
 	}
-}
-
-void Server::handlePrivmsg(Client &client, std::vector<std::string> tokens, int index, const std::string &message)
-{
-	std::string response = ":" + client.getNick() + " PRIVMSG " + tokens[index + 1] + " :" + tokens[index + 2] + "\r\n";
-	MessageServerToClient(client, response);
 }
 
 void Server::handleKick(Client &client, std::vector<std::string> tokens, int index)
