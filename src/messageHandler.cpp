@@ -47,8 +47,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             handleNick(client, tokens, i);
         else if (token == "KICK")
             handleKick(client, tokens, i);
-        //else if (token == "TOPIC")
-        //    handleTopic(client, tokens, i);
+        // else if (token == "TOPIC")
+        //     handleTopic(client, tokens, i);
         i++;
     }
 }
@@ -73,6 +73,3 @@ std::vector<std::string> Server::SplitString(const std::string &str)
     }
     return tokens;
 }
-
-
-
