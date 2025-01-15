@@ -49,6 +49,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             handleKick(client, tokens, i);
         else if (token == "PING")
             MessageServerToClient(client, "PONG");
+		// else if (token == "MODE")
+        //    handleMode(client, tokens, i, message);
 
         // else if (token == "TOPIC")
         //     handleTopic(client, tokens, i);

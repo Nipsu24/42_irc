@@ -27,6 +27,7 @@ public:
 	void runServer();
 	void addClient(Client *client);
 	void removeClient(int fd);
+	std::vector<Channel *> getChannels();
 
 private:
 	int _port = 6667; // Example port
@@ -60,5 +61,5 @@ private:
 	void handleKick(Client &client, std::vector<std::string> tokens, int index);
 	void handleTopic(Client &client, std::vector<std::string> tokens, int index);
 	void handleInvite(Client &client, std::vector<std::string> tokens, int index);
-	void handleMode(Client &client, std::vector<std::string> tokens, int index);
+	void handleMode(Client &client, std::vector<std::string> tokens, int index, const std::string &message);
 };
