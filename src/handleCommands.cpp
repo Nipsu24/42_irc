@@ -81,13 +81,6 @@ void Server::handleJoin(Client &client, std::vector<std::string> tokens, int ind
 	}
 }
 
-void Server::handlePrivmsg(Client &client, std::vector<std::string> tokens, int index, const std::string &message)
-{ 
-	(void) message;
-	std::string response = ":" + client.getNick() + " PRIVMSG " + tokens[index + 1] + " :" + tokens[index + 2] + "\r\n";
-	MessageServerToClient(client, response);
-}
-
 void Server::handleKick(Client &client, std::vector<std::string> tokens, int index)
 {
 	(void)client;
