@@ -40,7 +40,10 @@ void Server::MessageClientToServer(Client &client, const std::string &message)
         else if (token == "USER")
             handleUserName(client, tokens, i);
         else if (token == "JOIN")
+        {
+            std::cout << "here";
             handleJoin(client, tokens, i);
+        }
         else if (token == "PRIVMSG")
             handlePrivmsg(client, tokens, i);
         else if (token == "NICK")
@@ -99,7 +102,8 @@ void Server::HandleCAPLS(Client &client, std::vector<std::string> tokens, int in
  */
 void Server::handleUserName(Client &client, std::vector<std::string> tokens, int index)
 {
-    client.setNick(tokens[index + 1]);
+    client.setNick(tokens[index + 1] + "_");
+    client.setUsername(tokens[index + 1]);
     std::cout << "Received USER from client" << client.getFd() << ": " << client.getNick() << std::endl;
     std::string response = "001 " + client.getNick() + " :Welcome to the Internet Relay Network " + client.getNick();
     MessageServerToClient(client, response);
@@ -112,15 +116,16 @@ void Server::handleNick(Client &client, std::vector<std::string> tokens, int ind
 
 void Server::handleJoin(Client &client, std::vector<std::string> tokens, int index)
 {
-    if (tokens[index + 2] == "")
+    if (tokens[index + 1] == "")
     {
         MessageServerToClient(client, "\r\n");
         return;
     }
     else
     {
+        joinChannel(&client, tokens[index+1]);
         std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
-        std::string response = ":" + client.getNick() + " JOIN " + tokens[index + 2] + "\r\n";
+        std::string response = ":" + client.getNick() + " JOIN " + tokens[index + 1] + "\r\n";
         MessageServerToClient(client, response);
     }
 }

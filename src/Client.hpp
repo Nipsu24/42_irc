@@ -39,4 +39,5 @@ private:
     std::string _nick;
     std::string _username;
     std::string _nickname;
+    //Channel* _loggedIn;
 };
