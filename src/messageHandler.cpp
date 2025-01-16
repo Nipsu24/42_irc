@@ -7,7 +7,7 @@
 #include <string_view>
 #include <regex>
 #include <vector>
-#include <sstream>
+
 
 /*void Server::sendToChannelClients(Client* client, std::string message, std::string channelName)
 {
@@ -105,33 +105,32 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::getline(iss, rest);
             client.getLoggedIn()->setTopic(&client, channelName, rest);
         }
-        // else if (command == "KICK")
-        // {
-        //     std::string channelName;
-        //     std::string rest;
-        //     iss >> channelName;
-        //     std::getline(iss, rest);
-        //     client.getLoggedIn()->setKick(&client, channelName, rest);
-        // }
+          else if (command == "KICK")
+        {
+            std::string channelName;
+            std::string nick;
+            iss >> channelName;
+            iss >> nick;
+            std::cout << channelName << "in" << nick << std::endl;
+            client.getLoggedIn()->setKick(&client, channelName, nick);
+        }
         else if (command == "MODE")
         {
             std::string channelName;
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
-			std::cout << channelName << " REST " << rest << "END" << std::endl;
-			handleMode(client, channelName, rest);
-            //client.getLoggedIn()->setMode(&client, channelName, rest);
+            
+            handleMode(client, channelName, rest);
         }
-        // else if (command == "INVITE")
-        // {
-        //     std::string channelName;
-        //     std::string rest;
-        //     iss >> channelName;
-        //     std::getline(iss, rest);
-        //     client.getLoggedIn()->setInvite(&client, channelName, rest);
-        // }
-      
+        else if (command == "INVITE")
+        {
+            std::string channelName;
+            std::string nick;
+            iss >> nick;
+            iss >> channelName;
+            client.getLoggedIn()->setInvite(&client, channelName, nick);
+        }
     }
 }
 
