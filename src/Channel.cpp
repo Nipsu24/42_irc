@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include "Channel.hpp"
 
 Channel::Channel() {}
@@ -208,6 +209,21 @@ void Channel::setTopic(Client *client, const std::string& channelName, std::stri
 		std::cout << "INSERT USERNAME " << "changed the topic of #" << _channelName << " to: " << _topic << std::endl;
 	}
 }
+
+
+void Channel::setKick(Client *client, const std::string& channelName, std::string& rest)
+{
+	std::cout << client->getNick() + " kicked out " + rest + " from " + channelName << std::endl; 
+}
+
+void Channel::setInvite(Client *client, const std::string& channelName, std::string& rest)
+{
+	std::istringstream iss(rest);
+	std::string nick;
+    iss >> nick;
+	std::cout << client->getNick() + " invited " + nick + " from " + channelName << std::endl;
+}
+
 
 /*Adds new client to the channel by adding it to the vector array of clients.
   Used in joinChannel function in server.cpp*/
