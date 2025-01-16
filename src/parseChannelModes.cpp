@@ -13,6 +13,7 @@
 #include "Channel.hpp"
 #include "Server.hpp"
 #include <algorithm>
+#include <iostream>
 
 std::vector<Channel *>& Server::getChannels() {
 	return (_channels);
@@ -48,7 +49,8 @@ bool	Server::userIsMemberOfChannel(Client &client, const std::string& channelNam
 
 /*Currently covers /mode functionality without mode input*/
 void Server::handleMode(Client &client, const std::string& channelName, const std::string &message) {
-	(void)message;
+
+	std::cout << channelName << " in " << message << std::endl;
 	std::string response;
 	if (message.empty() ) {
 		if (channelExists(channelName)) {
