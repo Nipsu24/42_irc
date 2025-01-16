@@ -52,7 +52,7 @@ void Server::handleMode(Client &client, const std::string& channelName, const st
 
 	std::cout << channelName << " in " << message << std::endl;
 	std::string response;
-	if (message.empty() ) {
+	if (std::all_of(message.begin(), message.end(), [](unsigned char ch) { return std::isspace(ch); })) {
 		if (channelExists(channelName)) {
 			if (userIsMemberOfChannel(client, channelName)) {
 				response = "324 " + client.getNick() + " " + channelName + " +Cnst"; // modes still to be inserted dynamically
