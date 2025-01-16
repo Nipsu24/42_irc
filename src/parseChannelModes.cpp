@@ -31,7 +31,7 @@ bool	Server::channelExists(const std::string& channelName) {
 
 /*Checks if user is member of channel by retrieving channel with help of passed channel name and then
   check within the user list of the channel of occurence for passed user(client).*/
-bool	Server::userIsMemberOfChannel(Client &client, std::string& channelName) {
+bool	Server::userIsMemberOfChannel(Client &client, const std::string& channelName) {
 	auto it = std::find_if(getChannels().begin(), getChannels().end(), [&channelName](Channel* channel) {
 		return channel->getChannelName() == channelName;
 	});
@@ -46,6 +46,7 @@ bool	Server::userIsMemberOfChannel(Client &client, std::string& channelName) {
 	return (false);
 }
 
+/*Currently covers /mode functionality without mode input*/
 void Server::handleMode(Client &client, std::vector<std::string> tokens, int index, const std::string &message) {
 	(void)index;
 	(void)message;
@@ -62,3 +63,11 @@ void Server::handleMode(Client &client, std::vector<std::string> tokens, int ind
 		MessageServerToClient(client, response);
 	}
 }
+
+// void	Server::handleTopic(Client &client, const std::string& channelName, const std::string& topic) {
+// 	if (channelExists(channelName)) {
+// 		if (userIsMemberOfChannel(client, channelName)) {
+
+// 		}
+// 	}
+// }

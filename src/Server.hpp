@@ -64,5 +64,5 @@ private:
 	//parseChannelModes.cpp
 	bool					channelExists(const std::string& channelName);
 	std::vector<Channel *>&	getChannels();
-	bool					userIsMemberOfChannel(Client &client, std::string& channelName);
+	bool					userIsMemberOfChannel(Client &client, const std::string& channelName);
 };
