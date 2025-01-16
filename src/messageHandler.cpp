@@ -71,7 +71,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         std::istringstream iss(message);
         iss >> command;
 
-        if (command == "PING")
+        std::cout << "raw message" << message << std::endl;
+		if (command == "PING")
         {
             handlePingPong(client);
         }
@@ -79,6 +80,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::string channelName;
             iss >> channelName; 
+			std::cout << channelName << "END" << std::endl;
             handleJoin(client, channelName);
         }
         else if (command == "PRIVMSG")
@@ -103,30 +105,32 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::getline(iss, rest);
             client.getLoggedIn()->setTopic(&client, channelName, rest);
         }
-        /*  else if (command == "KICK")
-        {
-            std::string channelName;
-            std::string rest;
-            iss >> channelName;
-            std::getline(iss, rest);
-            client.getLoggedIn()->setKick(&client, channelName, rest);
-        }
+        // else if (command == "KICK")
+        // {
+        //     std::string channelName;
+        //     std::string rest;
+        //     iss >> channelName;
+        //     std::getline(iss, rest);
+        //     client.getLoggedIn()->setKick(&client, channelName, rest);
+        // }
         else if (command == "MODE")
         {
             std::string channelName;
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
+			std::cout << channelName << " REST " << rest << "END" << std::endl;
+			handleMode(client, channelName, rest);
             //client.getLoggedIn()->setMode(&client, channelName, rest);
         }
-        else if (command == "INVITE")
-        {
-            std::string channelName;
-            std::string rest;
-            iss >> channelName;
-            std::getline(iss, rest);
-            client.getLoggedIn()->setInvite(&client, channelName, rest);
-        }*/
+        // else if (command == "INVITE")
+        // {
+        //     std::string channelName;
+        //     std::string rest;
+        //     iss >> channelName;
+        //     std::getline(iss, rest);
+        //     client.getLoggedIn()->setInvite(&client, channelName, rest);
+        // }
       
     }
 }
