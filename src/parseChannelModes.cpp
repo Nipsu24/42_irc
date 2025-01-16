@@ -14,17 +14,51 @@
 #include "Server.hpp"
 #include <algorithm>
 
-std::vector<Channel *> Server::getChannels() {
+std::vector<Channel *>& Server::getChannels() {
 	return (_channels);
 }
 
-void Server::handleMode(Client &client, std::vector<std::string> tokens, int index, const std::string &message) {
-	 if (tokens.size() == 2) {
-		auto it = find_if(getChannels().begin(), getChannels().end(), [&tokens](Channel *channel) {
-			return channel->getChannelName() == tokens[1];
+/*Checks if passed channel name exists in vector of channels. Returns true in case channel exists.*/
+bool	Server::channelExists(const std::string& channelName) {
+	auto it = find_if(getChannels().begin(), getChannels().end(), [&channelName](Channel *channel) {
+			return channel->getChannelName() == channelName;
 		});
-		if (it != getChannels().end()) {
-			//check if client is in channel and then reply to client
+		if (it != getChannels().end())
+			return (true);
+		else
+			return (false);
+}
+
+/*Checks if user is member of channel by retrieving channel with help of passed channel name and then
+  check within the user list of the channel of occurence for passed user(client).*/
+bool	Server::userIsMemberOfChannel(Client &client, std::string& channelName) {
+	auto it = std::find_if(getChannels().begin(), getChannels().end(), [&channelName](Channel* channel) {
+		return channel->getChannelName() == channelName;
+	});
+	if (it != getChannels().end()) {
+		Channel* channel = *it;
+		// Check if the client exists in the user list
+		auto& users = channel->getUsers();
+		auto userIt = std::find(users.begin(), users.end(), &client);
+		if (userIt != users.end())
+			return (true);
+	}
+	return (false);
+}
+
+void Server::handleMode(Client &client, std::vector<std::string> tokens, int index, const std::string &message) {
+	(void)index;
+	(void)message;
+	std::string response;
+	if (tokens.size() == 2) {
+		if (channelExists(tokens[1])) {
+			if (userIsMemberOfChannel(client, tokens[1])) {
+				response = "324 " + client.getNick() + " " + tokens[1] + " +Cnst"; // modes still to be inserted dynamically
+			}
 		}
-	 }
+		else {
+			response = "403 " + client.getNick() + " " + tokens[1] + ":No such channel"; 
+		}
+		MessageServerToClient(client, response);
+	}
 }

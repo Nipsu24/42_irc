@@ -27,7 +27,6 @@ public:
 	void runServer();
 	void addClient(Client *client);
 	void removeClient(int fd);
-	std::vector<Channel *> getChannels();
 
 private:
 	int _port = 6667; // Example port
@@ -62,4 +61,8 @@ private:
 	void handleTopic(Client &client, std::vector<std::string> tokens, int index);
 	void handleInvite(Client &client, std::vector<std::string> tokens, int index);
 	void handleMode(Client &client, std::vector<std::string> tokens, int index, const std::string &message);
+	//parseChannelModes.cpp
+	bool					channelExists(const std::string& channelName);
+	std::vector<Channel *>&	getChannels();
+	bool					userIsMemberOfChannel(Client &client, std::string& channelName);
 };
