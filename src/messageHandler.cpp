@@ -67,7 +67,6 @@ void Server::handleClientMessage(Client &client, const std::string &message)
     }
     else
     {
-
         std::string command;
         std::istringstream iss(message);
         iss >> command;

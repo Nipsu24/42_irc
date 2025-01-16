@@ -71,7 +71,9 @@ private:
 	void handleKick(Client &client, std::vector<std::string> tokens, int index);
 	void handleTopic(Client &client, std::vector<std::string> tokens, int index);
 	void handleInvite(Client &client, std::vector<std::string> tokens, int index);
-	void handleMode(Client &client, std::vector<std::string> tokens, int index);
-	
-
+	//parseChannelModes.cpp
+	void					handleMode(Client &client, const std::string& channelName, const std::string &message);
+	bool					channelExists(const std::string& channelName);
+	std::vector<Channel *>&	getChannels();
+	bool					userIsMemberOfChannel(Client &client, const std::string& channelName);
 };
