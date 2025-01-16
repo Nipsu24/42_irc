@@ -68,7 +68,6 @@ void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
         perror("Accept failed");
         return;
     }
-
     std::cout << "New client connected." << std::endl;
     _clients.push_back(new Client(client_fd, client_addr));
     _clients.back()->setState(REGISTERING);

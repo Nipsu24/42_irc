@@ -24,9 +24,9 @@ FLAGS = -Wall -Wextra -Werror -std=c++11 -fsanitize=address
 SRC_DIR = ./src
 OBJ_DIR = obj
 
-FILES = main.cpp Server.cpp Client.cpp runServer.cpp messageHandler.cpp Channel.cpp handleCommands.cpp handlePrivmsg.cpp
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
-OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(FILES:.cpp=.o))
 
 all: $(NAME)
 

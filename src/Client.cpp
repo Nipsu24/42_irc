@@ -3,7 +3,7 @@
 Client::Client() {}
 
 Client::Client(int fd, const sockaddr_in &client_addr)
-    : _fd(fd), _addr(client_addr) {}
+    : _fd(fd), _addr(client_addr), _loggedIn(nullptr) {}
 
 Client::Client(const Client &other)
 {
@@ -48,12 +48,12 @@ std::string Client::getNick() const
 
 void Client::setUsername(const std::string &value)
 {
-    _username = value;
+    _userName = value;
 }
 
 std::string Client::getUsername() const
 {
-    return _username;
+    return _userName;
 }
 
 void Client::setState(clientState state)
@@ -67,10 +67,10 @@ clientState Client::getState() const
 }
 
 
-Channel* Client::getLoggedin() const {
+Channel* Client::getLoggedIn() const {
     return _loggedIn;
 }
 
-void Client::setLoggedin(Channel* channel) {
+void Client::setLoggedIn(Channel* channel) {
     _loggedIn = channel;
 }

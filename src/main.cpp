@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	(void) argv;
 	if (argc != 3)
 		return (printErrorMessage(0));
-
+	//segfault if argv[1] is not numbers
 	Server server(std::stoi(argv[1]), argv[2]);
 
     try

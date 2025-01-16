@@ -32,8 +32,8 @@ public:
     sockaddr_in getAddr() const;
     void setState(clientState state);
     clientState getState() const;
-    Channel* getLoggedin() const;
-    void setLoggedin(Channel* channel); 
+    Channel* getLoggedIn() const;
+    void setLoggedIn(Channel* channel); 
     bool cap_status;
 
 private:
@@ -41,7 +41,6 @@ private:
     int _state;
     sockaddr_in _addr;
     std::string _nick;
-    std::string _username;
-    std::string _nickname;
+    std::string _userName;
     Channel* _loggedIn;
 };

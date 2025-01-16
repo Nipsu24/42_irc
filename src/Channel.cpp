@@ -79,6 +79,7 @@ void Channel::printMode() const
 	}
 }
 
+
 /*Compares elements of _modes vector with passed newModes vector and adds the elements from
   newModes vector to _modes vector in case they are not yet present or removes elements in
   case they have '-' prefix. This is done with erase method which requires index which in turn
@@ -196,11 +197,14 @@ void Channel::printTopic() const
 }
 
 /*Sets topic of the channel and prints respective message*/
-void Channel::setTopic(const std::string &topic)
+void Channel::setTopic(Client *client, const std::string& channelName, std::string& rest)
 {
+	(void) client;
+	(void) channelName;
+	std::cout << rest << std::endl;
 	if (_topicOperatorsOnly == false)
 	{ // code to be added in if statement: "|| client has operator status"
-		_topic = topic;
+		_topic = rest;
 		std::cout << "INSERT USERNAME " << "changed the topic of #" << _channelName << " to: " << _topic << std::endl;
 	}
 }

@@ -28,7 +28,7 @@ Parse parseMessage(const std::string& input) {
 	iss >> newRequest.command;
 
 	// Extract channel namejoinChannel(client, currentRequest.channelName);
-		if (iss >> temp) {
+	if (iss >> temp) {
 		if (!temp.empty() && temp[0] == '#') {
 			newRequest.channelName = temp;
 		} else {
