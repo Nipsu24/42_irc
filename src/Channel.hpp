@@ -31,10 +31,15 @@ public:
 	std::string					getChannelName() const;
 	std::string					getChannelPassw() const;
 	void						printMode() const;
-	void						setMode(const std::vector<std::string>& newModes);
+	
 	void						printTopic() const;
-	void						setTopic(const std::string& topic);
-	void						setKick(Client* client, std::string kickedNick);
+
+	void						setMode(const std::vector<std::string>& newModes);
+	void						setTopic(Client *client, const std::string& channelName, std::string& rest);
+	void						setKick(Client *client, const std::string& channelName, std::string& rest);
+	void						setInvite(Client *client, const std::string& channelName, std::string& rest);
+	
+	
 	void						printUsers() const;
 	std::vector<Client*>&		getUsers();
 	void						executeMode();

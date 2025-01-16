@@ -7,6 +7,27 @@
 #include <string_view>
 #include <regex>
 #include <vector>
+#include <sstream>
+
+/*void Server::sendToChannelClients(Client* client, std::string message, std::string channelName)
+{
+
+    for (Channel *channel : _channels)
+    {
+        std::cout << channel->getChannelName() << std::endl;
+        if (channel->getChannelName() == channelName)
+        {
+            for (Client *_client : channel->getUsers())
+            {
+                if (&_client != &client)
+                    MessageServerToClient(*_client, message);
+            }
+        }
+    }
+   
+}*/
+
+
 
 /*
  * Handle events on the server
@@ -25,34 +46,89 @@ void Server::MessageServerToClient(Client client, const std::string &message)
  */
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
-    std::vector<std::string> tokens = SplitString(message);
-    if (tokens.size() < 1)
+    if (client.getState() != REGISTERED)
     {
-        std::cerr << "Invalid message" << std::endl;
-        return;
+        std::vector<std::string> tokens = SplitString(message);
+        if (tokens.size() < 1)
+        {
+            std::cerr << "Invalid message" << std::endl;
+            return;
+        }
+        int i = 0;
+        for (auto &token : tokens)
+        {
+            std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
+            if (token == "CAP")
+                handleCAPLS(client, tokens, i);
+            else if (token == "USER")
+                handleUserName(client, tokens, i);
+            i++;
+        }
     }
-    int i = 0;
-    for (auto &token : tokens)
+    else
     {
-        std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
-        if (token == "CAP")
-            HandleCAPLS(client, tokens, i);
-        else if (token == "USER")
-            handleUserName(client, tokens, i);
-        else if (token == "JOIN")
-            handleJoin(client, tokens, i);
-        else if (token == "PRIVMSG")
-            handlePrivmsg(client, tokens, i, message);
-        else if (token == "NICK")
-            handleNick(client, tokens, i);
-        else if (token == "KICK")
-            handleKick(client, tokens, i);
-        else if (token == "PING")
-            MessageServerToClient(client, "PONG");
 
-        // else if (token == "TOPIC")
-        //     handleTopic(client, tokens, i);
-        i++;
+        std::string command;
+        std::istringstream iss(message);
+        iss >> command;
+
+        if (command == "PING")
+        {
+            handlePingPong(client);
+        }
+        else if (command == "JOIN")
+        {
+            std::string channelName;
+            iss >> channelName; 
+            handleJoin(client, channelName);
+        }
+        else if (command == "PRIVMSG")
+        {
+            std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+            handlePrivmsg(client, channelName, rest);
+        }
+        else if (command == "NICK")
+        {
+            std::string nick;
+            iss >> nick;
+            handleNick(client, nick);
+        }
+        else if (command == "TOPIC")
+        {
+            std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+            client.getLoggedIn()->setTopic(&client, channelName, rest);
+        }
+        /*  else if (command == "KICK")
+        {
+            std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+            client.getLoggedIn()->setKick(&client, channelName, rest);
+        }
+        else if (command == "MODE")
+        {
+            std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+            //client.getLoggedIn()->setMode(&client, channelName, rest);
+        }
+        else if (command == "INVITE")
+        {
+            std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+            client.getLoggedIn()->setInvite(&client, channelName, rest);
+        }*/
+      
     }
 }
 

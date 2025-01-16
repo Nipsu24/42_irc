@@ -17,7 +17,8 @@ Server::Server() {}
 
 Server::Server(int _port, std::string _passwd) :
 	_port(_port),
-	_passwd(_passwd) {}
+	_passwd(_passwd)
+	{}
 
 Server::Server(const Server& other) {
 	this->_port = other._port;
