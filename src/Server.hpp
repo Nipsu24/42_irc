@@ -72,9 +72,13 @@ private:
 	void handleTopic(Client &client, std::vector<std::string> tokens, int index);
 	void handleInvite(Client &client, std::vector<std::string> tokens, int index);
 	//parseChannelModes.cpp
-	void					handleMode(Client &client, const std::string& channelName, const std::string &message);
+	void					handleMode(Client& client, const std::string& channelName, const std::string& message);
 	bool					channelExists(const std::string& channelName);
 	std::vector<Channel *>&	getChannels();
+	std::vector<Client *>&	getClients();
 	bool					userIsMemberOfChannel(Client &client, const std::string& channelName);
 	Channel*				getChannelByChannelName(const std::string& channelName);
+	Client*					getClientByNickname(const std::string& nickname);
+	void					checkForValidModes(const std::string& message, Client& client, Channel* channel);
+	int						checkValidParameter(int index, std::vector<std::string> parameter, char mode, Channel *channel);
 };

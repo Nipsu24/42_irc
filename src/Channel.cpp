@@ -84,23 +84,6 @@ std::string	Channel::getMode() const
 	return (activeModes);
 }
 
-/*Checks if there are any modes set for the channel. If this is the case,
-  prints respective modes.*/
-// void Channel::printMode() const
-// {
-// 	if (_modes.empty())
-// 		std::cout << "No mode set for #" << _channelName << std::endl;
-// 	else
-// 	{
-// 		std::string result;
-// 		result += _modes[0];
-// 		for (unsigned int i = 1; i < _modes.size(); ++i)
-// 			result += _modes[i][1];
-// 		std::cout << "mode/#" << _channelName << " [" << result << "]" << std::endl;
-// 	}
-// }
-
-
 /*Compares elements of _modes vector with passed newModes vector and adds the elements from
   newModes vector to _modes vector in case they are not yet present or removes elements in
   case they have '-' prefix. This is done with erase method which requires index which in turn

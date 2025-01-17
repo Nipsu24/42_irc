@@ -31,16 +31,11 @@ public:
 	std::string					getChannelName() const;
 	std::string					getChannelPassw() const;
 	std::string					getMode() const;
-	void						printMode() const;
-	
 	void						printTopic() const;
-
 	void						setMode(const std::vector<std::string>& newModes);
 	void						setTopic(Client *client, const std::string& channelName, std::string& rest);
 	void						setKick(Client *client, const std::string& channelName, std::string& rest);
 	void						setInvite(Client *client, const std::string& channelName, std::string& rest);
-	
-	
 	void						printUsers() const;
 	std::vector<Client*>&		getUsers();
 	void						executeMode();
