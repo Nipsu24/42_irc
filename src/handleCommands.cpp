@@ -103,6 +103,7 @@ void Server::handleJoin(Client &client, std::string channelName)
 		if (channelExists == false)
 		{
 			Channel *newChannel = new Channel(channelName);
+			newChannel->setTimestamp();
 			newChannel->addClient(&client);
 			_channels.push_back(newChannel);
 			client.setLoggedIn(newChannel);

@@ -30,6 +30,17 @@ bool	Server::channelExists(const std::string& channelName) {
 			return (false);
 }
 
+Channel*	Server::getChannelByChannelName(const std::string& channelName) {
+	const auto& channels = getChannels();
+	auto it = std::find_if(channels.begin(), channels.end(), [&channelName](Channel* channel) {
+		return channel->getChannelName() == channelName;
+	});
+	if (it != channels.end())
+		return (*it);
+	return (nullptr);
+}
+
+
 /*Checks if user is member of channel by retrieving channel with help of passed channel name and then
   check within the user list of the channel of occurence for passed user(client).*/
 bool	Server::userIsMemberOfChannel(Client &client, const std::string& channelName) {
@@ -47,24 +58,34 @@ bool	Server::userIsMemberOfChannel(Client &client, const std::string& channelNam
 	return (false);
 }
 
-/*Currently covers /mode functionality without mode input*/
-void Server::handleMode(Client &client, const std::string& channelName, const std::string &message) {
-
-	std::cout << channelName << " in " << message << std::endl;
-	std::string response;
-	if (std::all_of(message.begin(), message.end(), [](unsigned char ch) { return std::isspace(ch); })) {
+/*Currently covers /mode functionality without mode input, all_of function checks if there is only whitespace
+  remaining in the message string. ChannelByChannelName function retrieves channel object with help of channel
+  name, as it is required to call the getMode function.*/
+void Server::handleMode(Client &client, const std::string& channelName, const std::string &message)
+{
+	std::string firstResponse;
+	std::string	secondResponse;
+	if ((std::all_of(message.begin(), message.end(), [](unsigned char ch) { return std::isspace(ch); })) || message.empty()) {
 		if (channelExists(channelName)) {
 			if (userIsMemberOfChannel(client, channelName)) {
-				response = "324 " + client.getNick() + " " + channelName + " +Cnst"; // modes still to be inserted dynamically
+				Channel* channel = getChannelByChannelName(channelName);
+				firstResponse = "324 " + client.getNick() + " " + channelName + " " + channel->getMode();
+				secondResponse = "329 " + client.getNick() + " " + channelName + " " + channel->getTimestamp();
+				MessageServerToClient(client, firstResponse);
+				MessageServerToClient(client, secondResponse);
 			}
 		}
 		else {
-			response = "403 " + client.getNick() + " " + channelName + ":No such channel"; 
+			firstResponse = "403 " + client.getNick() + " " + channelName + ":No such channel"; 
+			MessageServerToClient(client, firstResponse);
 		}
-		MessageServerToClient(client, response);
 	}
 }
 
+//>> @time=2025-01-17T09:08:37.182Z :lithium.libera.chat 324 mariusmeier #new_channel24 +
+//@time=2025-01-17T09:08:37.182Z :lithium.libera.chat 329 mariusmeier #new_channel24 1737101855
+
+//iklot
 // void	Server::handleTopic(Client &client, const std::string& channelName, const std::string& topic) {
 // 	if (channelExists(channelName)) {
 // 		if (userIsMemberOfChannel(client, channelName)) {

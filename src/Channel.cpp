@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <sstream>
 #include "Channel.hpp"
+#include <chrono>
+#include <ctime>
 
 Channel::Channel() {}
 
@@ -64,21 +66,39 @@ std::string Channel::getChannelPassw() const
 	return _channelPassw;
 }
 
+/*Returns a copy of a string with the current active modes of a channel. Inserts + sign
+  at beginning of string. If no mode active, only returns string with + sign in it.*/
+std::string	Channel::getMode() const
+{
+	std::string	activeModes;
+	
+	if (_inviteOnlyEnabled)
+		activeModes += 'i';
+	if (!_channelPassw.empty())
+		activeModes += 'k';
+	if (_userLimit != -1)
+		activeModes += 'l';
+	if (_topicOperatorsOnly)
+		activeModes += 't';
+	activeModes.insert(0, 1, '+');
+	return (activeModes);
+}
+
 /*Checks if there are any modes set for the channel. If this is the case,
   prints respective modes.*/
-void Channel::printMode() const
-{
-	if (_modes.empty())
-		std::cout << "No mode set for #" << _channelName << std::endl;
-	else
-	{
-		std::string result;
-		result += _modes[0];
-		for (unsigned int i = 1; i < _modes.size(); ++i)
-			result += _modes[i][1];
-		std::cout << "mode/#" << _channelName << " [" << result << "]" << std::endl;
-	}
-}
+// void Channel::printMode() const
+// {
+// 	if (_modes.empty())
+// 		std::cout << "No mode set for #" << _channelName << std::endl;
+// 	else
+// 	{
+// 		std::string result;
+// 		result += _modes[0];
+// 		for (unsigned int i = 1; i < _modes.size(); ++i)
+// 			result += _modes[i][1];
+// 		std::cout << "mode/#" << _channelName << " [" << result << "]" << std::endl;
+// 	}
+// }
 
 
 /*Compares elements of _modes vector with passed newModes vector and adds the elements from
@@ -227,9 +247,19 @@ void Channel::setInvite(Client *client, const std::string& channelName, std::str
 
 /*Adds new client to the channel by adding it to the vector array of clients.
   Used in joinChannel function in server.cpp*/
-void Channel::addClient(Client *client)
+void	Channel::addClient(Client *client)
 {
 	_userList.push_back(client);
+}
+
+std::string	Channel::getTimestamp() {return (_timestampOfCreation);}
+
+/*Calculates current time since epoch in seconds and sets respective value to member variable by
+  converting value of timestamp into string.*/
+void	Channel::setTimestamp() {
+	auto now = std::chrono::system_clock::now();
+	auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+	_timestampOfCreation = std::to_string(timestamp);
 }
 
 // int	main(void)

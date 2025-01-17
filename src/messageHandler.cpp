@@ -71,7 +71,6 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         std::istringstream iss(message);
         iss >> command;
 
-        std::cout << "raw message" << message << std::endl;
 		if (command == "PING")
         {
             handlePingPong(client);
@@ -80,7 +79,6 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::string channelName;
             iss >> channelName; 
-			std::cout << channelName << "END" << std::endl;
             handleJoin(client, channelName);
         }
         else if (command == "PRIVMSG")

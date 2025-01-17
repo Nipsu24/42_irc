@@ -30,6 +30,7 @@ public:
 	//Methods
 	std::string					getChannelName() const;
 	std::string					getChannelPassw() const;
+	std::string					getMode() const;
 	void						printMode() const;
 	
 	void						printTopic() const;
@@ -44,6 +45,8 @@ public:
 	std::vector<Client*>&		getUsers();
 	void						executeMode();
 	void						addClient(Client* client);
+	std::string					getTimestamp();
+	void						setTimestamp();
 
 private:
 	std::string					_channelName;
@@ -59,6 +62,7 @@ private:
 	bool						_inviteOnlyEnabled; // false by default, needs +i mode
 	std::vector<Client*>		_removeOperatorsList; // needs to be populated by parsing, set empty if not applicable
 	std::vector<Client*>		_addOperatorsList; //  needs to be populated by parsing, set empty if not applicable
+	std::string					_timestampOfCreation;
 };
 
 // #endif
