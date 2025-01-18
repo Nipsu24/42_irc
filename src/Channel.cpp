@@ -66,6 +66,10 @@ std::string Channel::getChannelPassw() const
 	return _channelPassw;
 }
 
+void	Channel::setChannelPassw(const std::string& password) {
+	_channelPassw = password;
+}
+
 /*Returns a copy of a string with the current active modes of a channel. Inserts + sign
   at beginning of string. If no mode active, only returns string with + sign in it.*/
 std::string	Channel::getMode() const
@@ -244,6 +248,31 @@ void	Channel::setTimestamp() {
 	auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
 	_timestampOfCreation = std::to_string(timestamp);
 }
+
+std::string	Channel::getParsedModes() { return (_parsedModes); }
+
+std::vector<std::string>	Channel::getParsedParameters() { return (_parsedParameters); }
+
+void	Channel::setParsedModes(std::string modes) { _parsedModes = modes; }
+
+void	Channel::setParsedParameters(std::vector<std::string> parameters) {
+	_parsedParameters = parameters; }
+
+bool	Channel::getInviteOnlyState() { return (_inviteOnlyEnabled); }
+
+void	Channel::setInviteOnlyState(bool status) { _inviteOnlyEnabled = status; }
+
+void	Channel::clearParsedParameters() { _parsedParameters.clear(); }
+
+int		Channel::getUserLimit() { return (_userLimit); }
+
+void	Channel::setUserLimit(int limit) {
+	_userLimit = limit;
+}
+
+bool	Channel::getTopicOperatorsOnlyState() { return (_topicOperatorsOnly); }
+
+void	Channel::setTopicOperatorsOnlyState(bool status) { _topicOperatorsOnly= status; }
 
 // int	main(void)
 // {

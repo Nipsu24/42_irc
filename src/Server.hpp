@@ -79,6 +79,7 @@ private:
 	bool					userIsMemberOfChannel(Client &client, const std::string& channelName);
 	Channel*				getChannelByChannelName(const std::string& channelName);
 	Client*					getClientByNickname(const std::string& nickname);
-	void					checkForValidModes(const std::string& message, Client& client, Channel* channel);
-	int						checkValidParameter(int index, std::vector<std::string> parameter, char mode, Channel *channel);
+	bool					checkForValidModes(const std::string& message, Client& client, Channel* channel);
+	bool					checkValidParameter(int index, std::vector<std::string> parameter, char mode, Channel *channel, Client& client);
+	void					executeModes(Client& client, Channel* channel);
 };

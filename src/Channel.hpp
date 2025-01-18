@@ -30,6 +30,7 @@ public:
 	//Methods
 	std::string					getChannelName() const;
 	std::string					getChannelPassw() const;
+	void						setChannelPassw(const std::string& password);
 	std::string					getMode() const;
 	void						printTopic() const;
 	void						setMode(const std::vector<std::string>& newModes);
@@ -42,6 +43,17 @@ public:
 	void						addClient(Client* client);
 	std::string					getTimestamp();
 	void						setTimestamp();
+	std::string					getParsedModes();
+	std::vector<std::string>	getParsedParameters();
+	void						setParsedModes(std::string modes);
+	void						setParsedParameters(std::vector<std::string> parameters);
+	bool						getInviteOnlyState();
+	void						setInviteOnlyState(bool status);
+	void						clearParsedParameters();
+	int							getUserLimit();
+	void						setUserLimit(int limit);
+	bool						getTopicOperatorsOnlyState();
+	void						setTopicOperatorsOnlyState(bool status);
 
 private:
 	std::string					_channelName;
@@ -58,6 +70,8 @@ private:
 	std::vector<Client*>		_removeOperatorsList; // needs to be populated by parsing, set empty if not applicable
 	std::vector<Client*>		_addOperatorsList; //  needs to be populated by parsing, set empty if not applicable
 	std::string					_timestampOfCreation;
+	std::string					_parsedModes;
+	std::vector<std::string>	_parsedParameters;
 };
 
 // #endif
