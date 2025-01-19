@@ -104,7 +104,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::getline(iss, rest);
             client.getLoggedIn()->setTopic(&client, channelName, rest);
         }
-          else if (command == "KICK")
+        else if (command == "KICK")
         {
             std::string channelName;
             std::string nick;
@@ -119,8 +119,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
+			char toFind = 'i';
             std::cout << "REST: " << rest << std::endl;
-            handleMode(client, channelName, rest);
+            auto it = std::find(rest.begin(), rest.end(), toFind);
+			if (it == rest.end())
+				handleMode(client, channelName, rest);
         }
         else if (command == "INVITE")
         {

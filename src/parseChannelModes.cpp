@@ -114,7 +114,7 @@ bool	Server::checkForValidModes(const std::string& message, Client& client, Chan
 {
 	std::string 		modes;
 	std::string			response;
-	char				currentSign;
+	char				currentSign = '\0';
 	int					neededParameterCount = 0;
 	int					index = 0;
 	std::unordered_set<char> allowedChars = {'+', '-', 'i', 'k', 'l', 'o', 't'};
@@ -238,6 +238,8 @@ void	Server::executeModes(Client& client, Channel* channel)
 	int			i = 0;
 	std::string	setModes;
 	std::vector<std::string> parameters = channel->getParsedParameters();
+	Client* toRemoveOperator;
+	Client* toAddOperator;
 
 	for (char c : channel->getParsedModes()) {
 		if (c == '+' || c == '-')
@@ -265,7 +267,11 @@ void	Server::executeModes(Client& client, Channel* channel)
 						i++;
 						break;
 					case 'o':
-						//do sth
+						toAddOperator = getClientByNickname(parameters[i]);
+						channel->setChOperator(toAddOperator);
+						setModes += '+';
+						setModes += 'o';
+						i++;
 						break;
 					case 't':
 						if (!channel->getTopicOperatorsOnlyState()) {
@@ -300,7 +306,11 @@ void	Server::executeModes(Client& client, Channel* channel)
 						}
 						break;
 					case 'o':
-						//do sth
+						toRemoveOperator = getClientByNickname(parameters[i]);
+						channel->unsetChOperator(toRemoveOperator);
+						setModes += '-';
+						setModes += 'o';
+						i++;
 						break;
 					case 't':
 						if (channel->getTopicOperatorsOnlyState()) {
@@ -313,9 +323,42 @@ void	Server::executeModes(Client& client, Channel* channel)
 			}
 		}
 	}
+	setModes = compressModes(setModes);
+	response = ":" + client.getNick() + " " + "Mode" + " " + channel->getChannelName() + " " + setModes;
+	MessageServerToClient(client, response);
 }
-
+//>> @time=2025-01-19T10:38:23.987Z :mariusmeier!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 +i
+//>> @time=2025-01-19T10:39:32.509Z :mariusmeier!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 -it //-i -t
+//>> @time=2025-01-19T10:40:29.647Z :mariusmeier!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 +it
+//>> @time=2025-01-19T10:41:28.783Z :mariusmeier!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 +t-i
+//>> @time=2025-01-19T10:54:19.715Z :mariusmeier!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 -n+lk 10 helloworld
 //iklot
+
+std::string	Server::compressModes(const std::string& setModes) 
+{
+	std::string result;
+	std::string currentGroup; // Collects characters for the current sign group
+	char currentSign = '\0';  // Tracks the current active sign ('+' or '-')
+	
+	for (char c : setModes) {
+		if (c == '+' || c == '-') {
+			// If the sign changes, finalize the previous group
+			if (!currentGroup.empty()) {
+				result += currentSign + currentGroup;
+				currentGroup.clear();
+			}
+			currentSign = c; // Update the active sign
+		} else {
+			// Append the letter to the current group
+			currentGroup += c;
+		}
+	}
+	// Append the last group
+	if (!currentGroup.empty()) {
+		result += currentSign + currentGroup;
+	}
+	return (result);
+}
 
 /*Currently covers /mode functionality without mode input, all_of function checks if there is only whitespace
   remaining in the message string. ChannelByChannelName function retrieves channel object with help of channel

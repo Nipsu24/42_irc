@@ -54,6 +54,9 @@ public:
 	void						setUserLimit(int limit);
 	bool						getTopicOperatorsOnlyState();
 	void						setTopicOperatorsOnlyState(bool status);
+	std::vector<Client *>&		getChOperatorList();
+	void						setChOperator(Client* client);
+	void						unsetChOperator(Client* client);
 
 private:
 	std::string					_channelName;

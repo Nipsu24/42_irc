@@ -274,6 +274,26 @@ bool	Channel::getTopicOperatorsOnlyState() { return (_topicOperatorsOnly); }
 
 void	Channel::setTopicOperatorsOnlyState(bool status) { _topicOperatorsOnly= status; }
 
+std::vector<Client *>&	Channel::getChOperatorList() { return (_chOperatorList); }
+
+/*Check is client is in _chOperatorList and adds it, if this is not the case. Client to be passed
+  to push_back function, as class object expected (in contrast to erase function which expects an
+  iterator)*/
+void	Channel::setChOperator(Client* client) {
+	auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
+	if (it == _chOperatorList.end())
+		_chOperatorList.push_back(client);
+}
+
+/*Checks if client is in _chOperatorList and erases client from list if this is the case.
+  it needs to be passed to erase function, as an iterator is expected here (in contrast to
+  push_back function, which expects a class object)*/
+void	Channel::unsetChOperator(Client* client) {
+	auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
+	if (it != _chOperatorList.end())
+		_chOperatorList.erase(it);
+}
+
 // int	main(void)
 // {
 // 	Channel	channel("firstCh");

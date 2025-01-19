@@ -82,4 +82,5 @@ private:
 	bool					checkForValidModes(const std::string& message, Client& client, Channel* channel);
 	bool					checkValidParameter(int index, std::vector<std::string> parameter, char mode, Channel *channel, Client& client);
 	void					executeModes(Client& client, Channel* channel);
+	std::string				compressModes(const std::string& setModes);
 };

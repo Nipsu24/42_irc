@@ -34,7 +34,7 @@ $(NAME): $(OBJ_FILES)
 	@echo "\033[32m ircserv has been built successfully!\033[0m"
 
 fsanitize:
-	$(CC) -o $(NAME) $(FILES) -g -fsanitize=address -static-libsan
+	$(CC) -o $(NAME) $(SRC_FILES) -g -fsanitize=address -libsan
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CC) $(FLAGS) -c $< -o $@
