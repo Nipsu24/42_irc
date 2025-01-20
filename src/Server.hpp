@@ -72,4 +72,6 @@ private:
 	bool channelExists(const std::string &channelName);
 	std::vector<Channel *> &getChannels();
 	bool userIsMemberOfChannel(Client &client, const std::string &channelName);
+
+	void handleQuit(Client &client, std::string message);
 };

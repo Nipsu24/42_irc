@@ -232,6 +232,15 @@ void Channel::addClient(Client *client)
 	_userList.push_back(client);
 }
 
+void Channel::removeClient(Client *client)
+{
+	auto it = std::find(_userList.begin(), _userList.end(), client);
+	if (it != _userList.end())
+	{
+		_userList.erase(it);
+	}
+}
+
 // int	main(void)
 // {
 // 	Channel	channel("firstCh");

@@ -44,7 +44,7 @@ public:
 	std::vector<Client*>&		getUsers();
 	void						executeMode();
 	void						addClient(Client* client);
-
+	void						removeClient(Client* client);
 private:
 	std::string					_channelName;
 	std::string					_channelPassw; //empty if no passw for channel

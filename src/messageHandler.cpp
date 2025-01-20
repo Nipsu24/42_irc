@@ -8,7 +8,6 @@
 #include <regex>
 #include <vector>
 
-
 /*void Server::sendToChannelClients(Client* client, std::string message, std::string channelName)
 {
 
@@ -24,10 +23,8 @@
             }
         }
     }
-   
+
 }*/
-
-
 
 /*
  * Handle events on the server
@@ -78,7 +75,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         else if (command == "JOIN")
         {
             std::string channelName;
-            iss >> channelName; 
+            iss >> channelName;
             handleJoin(client, channelName);
         }
         else if (command == "PRIVMSG")
@@ -103,7 +100,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::getline(iss, rest);
             client.getLoggedIn()->setTopic(&client, channelName, rest);
         }
-          else if (command == "KICK")
+        else if (command == "KICK")
         {
             std::string channelName;
             std::string nick;
@@ -118,7 +115,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
-            
+
             handleMode(client, channelName, rest);
         }
         else if (command == "INVITE")
@@ -128,6 +125,10 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             iss >> nick;
             iss >> channelName;
             client.getLoggedIn()->setInvite(&client, channelName, nick);
+        }
+        else if (command == "QUIT")
+        {
+            handleQuit(client, message);
         }
     }
 }

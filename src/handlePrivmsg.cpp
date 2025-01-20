@@ -4,6 +4,7 @@
 
 void Server::handlePrivmsg(Client &client, const std::string channelName, const std::string &message)
 {
+
     std::string response = ":" + client.getNick() + " PRIVMSG " + channelName + message + "\r\n";
 
     for (Channel *channel : _channels)
@@ -13,8 +14,12 @@ void Server::handlePrivmsg(Client &client, const std::string channelName, const 
             for (Client *_client : channel->getUsers())
             {
                 if (_client != &client)
+                {
                     MessageServerToClient(*_client, response);
+                    break;
+                }
             }
+            break;
         }
     }
 }

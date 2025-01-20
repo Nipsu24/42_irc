@@ -90,7 +90,7 @@ void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *>
                 std::cout << "Client disconnected." << std::endl;
                 close(fds[i].fd);
                 _clients.erase(_clients.begin() + i - 1);
-                --i;
+                //--i;
             }
             else
             {
