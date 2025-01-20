@@ -115,15 +115,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
         else if (command == "MODE")
         {
-            std::string channelName;
+			std::string channelName;
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
-			char toFind = 'i';
-            std::cout << "REST: " << rest << std::endl;
-            auto it = std::find(rest.begin(), rest.end(), toFind);
-			if (it == rest.end())
-				handleMode(client, channelName, rest);
+			handleMode(client, channelName, rest);
         }
         else if (command == "INVITE")
         {
