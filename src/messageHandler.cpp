@@ -65,10 +65,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
     else
     {
         std::string command;
+		std::cout << "RAW MESSAGE: " << message << std::endl;
         std::istringstream iss(message);
         iss >> command;
 
-        if (command == "PING")
+		if (command == "PING")
         {
             handlePingPong(client);
         }
@@ -111,12 +112,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
         else if (command == "MODE")
         {
-            std::string channelName;
+			std::string channelName;
             std::string rest;
             iss >> channelName;
             std::getline(iss, rest);
-
-            handleMode(client, channelName, rest);
+			handleMode(client, channelName, rest);
         }
         else if (command == "INVITE")
         {
