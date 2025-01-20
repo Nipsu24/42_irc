@@ -10,49 +10,59 @@
 /*                                                                                          */
 /* **************************************************************************************** */
 
-
-
-
 #include <iostream>
 #include <string>
 #include "Server.hpp"
 
-
-
-
-int	printErrorMessage(int errorFlag)
+int printErrorMessage(int errorFlag)
 {
 	if (errorFlag == 0)
-		std::cout << "Error." << std:: endl << "Insufficient arguments, server needs <port> and <password>." << std::endl;
+		std::cout << "Error." << std::endl
+				  << "Insufficient arguments, server needs <port> and <password>." << std::endl;
 	if (errorFlag == 1)
-		std::cout << "Error." << std:: endl << "Invalid input. The port number has to consist of digits only." << std::endl;
+		std::cout << "Error." << std::endl
+				  << "Invalid port number. Recommended ports are 6665 - 6669" << std::endl;
 	if (errorFlag == 2)
-		std::cout << "Error." << std:: endl << "Input number is out of range. Please try again." << std::endl;
+		std::cout << "Error." << std::endl
+				  << "Input number is out of range. Please try again." << std::endl;
 	return (1);
 }
 
-int main(int argc, char **argv) {
-
-	(void) argv;
-	if (argc != 3)
-		return (printErrorMessage(0));
-	//segfault if argv[1] is not numbers
-	Server server(std::stoi(argv[1]), argv[2]);
-
-    try
+int checkValidPort(std::string port)
+{
+	int portNo;
+	if (port.length() > 5)
+		return 0;
+	for (size_t i = 0; i < port.length(); i++)
 	{
-	    server.runServer(); 
+		if (!isdigit(port[i]))
+			return 0;
 	}
-	catch(const std::exception& e)
-	{
-        std::cerr << e.what() << '\n';
-        return(1);
-    }
-
-
-    return 0;
+	portNo = std::stoi(port);
+	if (portNo < 1024 || portNo > 49151)
+		return 0;
+	return portNo;
 }
 
+int main(int argc, char **argv)
+{
+	if (argc != 3)
+		return (printErrorMessage(0));
+	int port = checkValidPort(argv[1]);
+	if (!port)
+		return (printErrorMessage(1));
+	Server server(port, argv[2]);
+	try
+	{
+		server.runServer();
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+		return (1);
+	}
+	return 0;
+}
 
 /*
 
@@ -81,5 +91,3 @@ int	main(int ac, char** av)
 	std::cout << "Welcome to your IRC / Webserv Server!" << std::endl;
 	return (0);
 }*/
-
-
