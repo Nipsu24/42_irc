@@ -107,6 +107,14 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             iss >> nick;
             handleNick(client, nick);
         }
+		else if (command == "MODE")
+        {
+			std::string channelName;
+            std::string rest;
+            iss >> channelName;
+            std::getline(iss, rest);
+			handleMode(client, channelName, rest);
+        }
         else if (command == "TOPIC")
         {
             handleTopic(client, message);
