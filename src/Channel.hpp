@@ -54,6 +54,38 @@ public:
 	std::vector<Client *>&		getChOperatorList();
 	void						setChOperator(Client* client);
 	void						unsetChOperator(Client* client);
+	bool						isClientOperator(Client* client);
+	bool 						isClientInChannel(Client* client);
+	Client*						getClientByNickname(const std::string& nickname);
+	
+
+		class ClientNotOperatorException : public std::exception
+	{
+			public:
+					const char  *what() const noexcept override;
+	};
+	class NickNotExistException : public std::exception
+	{
+			public:
+					const char  *what() const noexcept override;
+	};
+	class ChannelNotFoundException : public std::exception
+	{
+			public:
+					const char  *what() const noexcept override;
+	};
+	class ClientNotInChannelException : public std::exception
+	{
+			public:
+					const char  *what() const noexcept override;
+	};
+	class ClientAlreadyInChannelException : public std::exception
+	{
+			public:
+					const char  *what() const noexcept override;
+	};
+
+
 
 private:
 	std::string					_channelName;

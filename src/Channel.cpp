@@ -55,6 +55,17 @@ std::string Channel::getChannelPassw() const
 	return (_channelPassw);
 }
 
+bool Channel::isClientOperator(Client* client) {
+    
+    auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
+    return it != _chOperatorList.end();
+}
+
+bool Channel::isClientInChannel(Client* client) {
+	auto it = std::find(_userList.begin(), _userList.end(), client);
+	return it != _userList.end();
+}
+
 /*Function for setting the password of a channel*/
 void	Channel::setChannelPassw(const std::string& password) { _channelPassw = password; }
 
@@ -90,11 +101,11 @@ std::string	Channel::getMode() const
 	return (activeModes);
 }
 
-/*TO BE CHECKED IF STILL NEEDED - Sets topic of the channel and prints respective message*/
 void Channel::setTopic(Client *client, const std::string& channelName, std::string& rest)
 {
-	(void) client;
-	(void) channelName;
+	(void)channelName;
+	if (!isClientOperator(client))
+		throw ClientNotOperatorException();
 	std::cout << rest << std::endl;
 	if (_topicOperatorsOnly == false)
 	{ // code to be added in if statement: "|| client has operator status"
@@ -103,18 +114,39 @@ void Channel::setTopic(Client *client, const std::string& channelName, std::stri
 	}
 }
 
-void Channel::setKick(Client *client, const std::string& channelName, std::string& rest)
+
+void Channel::setKick(Client *client, const std::string& channelName, std::string& nick)
 {
-	std::cout << client->getNick() + " kicked out " + rest + " from " + channelName << std::endl; 
+	if (!isClientInChannel(client))
+		throw ClientNotInChannelException();
+	if (!isClientOperator(client))
+		throw ClientNotOperatorException();
+	auto it = std::find_if(_userList.begin(), _userList.end(), [&](Client* client) {
+        return client->getNick() == nick;
+    });
+    // If the client is found, remove it using removeClient
+    if (it != _userList.end()) {
+        removeClient(*it); // Call removeClient with the found client pointer
+    }
+	else {
+		throw NickNotExistException();
+	}
+	std::cout << client->getNick() + " kicked out " + nick + " from " + channelName << std::endl; 
 }
 
-void Channel::setInvite(Client *client, const std::string& channelName, std::string& rest)
+void Channel::setInvite(Client *client, const std::string& channelName, std::string& nick)
 {
-	std::istringstream iss(rest);
-	std::string nick;
-    iss >> nick;
-	std::cout << client->getNick() + " invited " + nick + " from " + channelName << std::endl;
+	(void)channelName;
+	(void) nick;
+	if (!isClientInChannel(client))
+		throw ClientNotInChannelException();
+	if (!isClientOperator(client))
+		throw ClientNotOperatorException();
+	if (isClientInChannel(getClientByNickname(nick)))
+		throw ClientAlreadyInChannelException();
 }
+
+
 
 /*Retrieves all client objects from a channel*/
 std::vector<Client *> &Channel::getUsers() { return (_userList); }
@@ -187,4 +219,27 @@ void	Channel::unsetChOperator(Client* client) {
 	auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
 	if (it != _chOperatorList.end())
 		_chOperatorList.erase(it);
+}
+
+
+
+
+const char* Channel::ClientNotOperatorException::what() const noexcept {
+    return "Client is not an operator in this channel";
+}
+
+const char* Channel::NickNotExistException::what() const noexcept {
+    return "Nick does not exist in this channel";
+}
+
+const char* Channel::ChannelNotFoundException::what() const noexcept {
+    return "Channel not found";
+}
+
+const char* Channel::ClientNotInChannelException::what() const noexcept {
+    return "Client is not in this channel";
+}
+
+const char* Channel::ClientAlreadyInChannelException::what() const noexcept {
+    return "Client already in this channel";
 }

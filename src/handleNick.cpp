@@ -10,7 +10,7 @@ void Server::handleNick(Client &client, std::string nick)
 	{ 
 		std::string response = ":" + oldNick + "!~" + client.getUsername() + "@localhost NICK :" + client.getNick();
 		MessageServerToClient(client, response);
-		if (client.getLoggedIn() != nullptr) {
+		/*if (client.getLoggedIn() != nullptr) {
 			std::string channelName = client.getLoggedIn()->getChannelName();
 			for (Channel *channel : _channels)
 			{
@@ -25,6 +25,6 @@ void Server::handleNick(Client &client, std::string nick)
 			}
 		} else {
 			std::cerr << "Client is not logged into any channel.\n";
-		}
+		}*/
 	}
 }
