@@ -87,11 +87,3 @@ bool Server::checkIfChannelExists(const std::string& channelName) {
     }
     return false;
 }
-
-
-/*Adds user(client) to a channel or creates new channel in case channel is not yet existing.
-  First checks if channel name already exists in vector array of _channels. If this
-  is the case, adds client to the channel. Otherwise creates pointer to a new channel
-  via 'new' (to ensure that class will exist further on and not go out of scope when
-  function terminates). Respective memory is freed again in destructor of server channel*/
-
