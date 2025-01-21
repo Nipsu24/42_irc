@@ -1,3 +1,15 @@
+/* **************************************************************************************** */
+/*                                                                                          */
+/*                                                        ::::::::::: :::::::::   ::::::::  */
+/*                                                           :+:     :+:    :+: :+:    :+:  */
+/*                                                          +:+     +:+    +:+ +:+          */
+/*                                                         +#+     +#++:++#:  +#+           */
+/*  By: Timo Saari<tsaari@student.hive.fi>,               +#+     +#+    +#+ +#+            */
+/*      Matti Rinkinen<mrinkine@student.hive.fi>,        #+#     #+#    #+# #+#    #+#      */
+/*      Marius Meier<mmeier@student.hive.fi>        ########### ###    ###  ########        */
+/*                                                                                          */
+/* **************************************************************************************** */
+
 #include "Server.hpp"
 #include <iostream>
 #include <sstream>
@@ -65,6 +77,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
     else
     {
         std::string command;
+		std::string	password;
 		std::cout << "RAW MESSAGE: " << message << std::endl;
         std::istringstream iss(message);
         iss >> command;
@@ -77,7 +90,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::string channelName;
             iss >> channelName;
-            handleJoin(client, channelName);
+			iss >> password;
+            handleJoin(client, channelName, password);
         }
         else if (command == "PRIVMSG")
         {

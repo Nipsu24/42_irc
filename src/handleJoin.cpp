@@ -8,7 +8,7 @@
 
 
 
-void Server::handleJoin(Client &client, std::string channelName)
+void	Server::handleJoin(Client &client, std::string channelName, std::string password)
 {
 	if (channelName == "")
 	{
@@ -22,6 +22,9 @@ void Server::handleJoin(Client &client, std::string channelName)
 		{
 			if (channelName == availableChannels->getChannelName())
 			{
+				if (!availableChannels->checkForModeRestrictions(client, password,
+					[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
+					return ;
 				availableChannels->addClient(&client);
 				channelExists = true;
 				break;

@@ -16,6 +16,7 @@
 #include "Channel.hpp"
 #include <chrono>
 #include <ctime>
+#include <functional>
 
 /* ************************************************Constructor Section START*************************************** */
 Channel::Channel() {}
@@ -146,8 +147,6 @@ void Channel::setInvite(Client *client, const std::string& channelName, std::str
 		throw ClientAlreadyInChannelException();
 }
 
-
-
 /*Retrieves all client objects from a channel*/
 std::vector<Client *> &Channel::getUsers() { return (_userList); }
 
@@ -221,9 +220,6 @@ void	Channel::unsetChOperator(Client* client) {
 		_chOperatorList.erase(it);
 }
 
-
-
-
 const char* Channel::ClientNotOperatorException::what() const noexcept {
     return "Client is not an operator in this channel";
 }
@@ -242,4 +238,48 @@ const char* Channel::ClientNotInChannelException::what() const noexcept {
 
 const char* Channel::ClientAlreadyInChannelException::what() const noexcept {
     return "Client already in this channel";
+}
+
+/*Returns amount of users within a channel.*/
+std::size_t	Channel::getNumberOfUsersInCh() const {
+	std::cout << "USER AMOUNT: " <<_userList.size() << std::endl;
+	return (_userList.size());
+}
+
+/*Called in handleJoin function in order to check whether any channel restrictions apply before user
+  joins channel. If a restriction apply, a message is sent to the client with help of the passed
+  messageFunc (in handle join MessageServerToClient function)*/
+bool	Channel::checkForModeRestrictions(Client &client, std::string password, std::function<void(Client&, const std::string&)> messageFunc)
+{
+	std::string	response;
+
+	if (!_channelPassw.empty()) {
+		if (_channelPassw != password) {
+			response = "475 " + client.getNick() + " " + _channelName + " :Cannot join channel (+k) - bad key";
+			messageFunc(client, response);
+			return (false);
+		}
+	}
+	if (_userLimit > -1) {
+		if (getNumberOfUsersInCh() >= static_cast<std::size_t>(_userLimit)) {
+			response = "471 " + client.getNick() + " " + _channelName + " :Cannot join channel (+l) - channel is full, try again later";
+			messageFunc(client, response);
+			return (false);
+		}
+	}
+	if (_inviteOnlyEnabled) {
+		response = "473 " + client.getNick() + " " + _channelName + " :Cannot join channel (+i) - you must be invited";
+		messageFunc(client, response);
+		return (false);
+	}
+	return (true);
+}
+
+/*Checks if client is channel operator*/
+bool	Channel::isChannelOperator(Client* client) {
+	auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
+	if (it != _chOperatorList.end())
+		return (true);
+	else
+		return (false);
 }

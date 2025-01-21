@@ -1,4 +1,14 @@
-
+/* **************************************************************************************** */
+/*                                                                                          */
+/*                                                        ::::::::::: :::::::::   ::::::::  */
+/*                                                           :+:     :+:    :+: :+:    :+:  */
+/*                                                          +:+     +:+    +:+ +:+          */
+/*                                                         +#+     +#++:++#:  +#+           */
+/*  By: Timo Saari<tsaari@student.hive.fi>,               +#+     +#+    +#+ +#+            */
+/*      Matti Rinkinen<mrinkine@student.hive.fi>,        #+#     #+#    #+# #+#    #+#      */
+/*      Marius Meier<mmeier@student.hive.fi>        ########### ###    ###  ########        */
+/*                                                                                          */
+/* **************************************************************************************** */
 
 #include "Server.hpp"
 #include <iostream>
@@ -8,9 +18,6 @@
 #include <unistd.h>
 #include <poll.h>
 #include <system_error>
-
-
-
 #include "Server.hpp"
 
 Server::Server() {}

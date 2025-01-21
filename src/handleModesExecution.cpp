@@ -65,14 +65,12 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 'i':
 						if (!channel->getInviteOnlyState()) {
 							channel->setInviteOnlyState(true);
-							setModes += '+';
-							setModes += 'i';
+							setModes += "+i";
 						}
 						break;
 					case 'k':
 					 	channel->setChannelPassw(parameters[i]);
-						setModes += '+';
-						setModes += 'k';
+						setModes += "+k";
 						if (setParameters.empty())
 							setParameters += parameters[i];
 						else
@@ -82,8 +80,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 'l':
 						std::cout << "PARAMETER: " << parameters[i] << std::endl;
 						channel->setUserLimit(std::stoi(parameters[i]));
-						setModes += '+';
-						setModes += 'l';
+						setModes += "+l";
 						if (setParameters.empty())
 							setParameters += parameters[i];
 						else
@@ -93,8 +90,8 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 'o':
 						toAddOperator = getClientByNickname(parameters[i]);
 						channel->setChOperator(toAddOperator);
-						setModes += '+';
-						setModes += 'o';
+						std::cout << parameters[i] << " set as operator" << std::endl;
+						setModes += "+o";
 						if (setParameters.empty())
 							setParameters += parameters[i];
 						else
@@ -104,8 +101,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 't':
 						if (!channel->getTopicOperatorsOnlyState()) {
 							channel->setTopicOperatorsOnlyState(true);
-							setModes += '+';
-							setModes += 't';
+							setModes += "+t";
 						}
 						break;
 				}		
@@ -115,29 +111,25 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 'i':
 						if (channel->getInviteOnlyState()) {
 							channel->setInviteOnlyState(false);
-							setModes += '-';
-							setModes += 'i';
+							setModes += "-i";
 						}
 						break;
 					case 'k':
 					 	if (!channel->getChannelPassw().empty()) {
 							channel->setChannelPassw("");
-							setModes += '-';
-							setModes += 'k';
+							setModes += "-k";
 						}
 						break;
 					case 'l':
 						if (channel->getUserLimit() != -1) {
 							channel->setUserLimit(-1);
-							setModes += '-';
-							setModes += 'l';
+							setModes += "-l";
 						}
 						break;
 					case 'o':
 						toRemoveOperator = getClientByNickname(parameters[i]);
 						channel->unsetChOperator(toRemoveOperator);
-						setModes += '-';
-						setModes += 'o';
+						setModes += "-o";
 						if (setParameters.empty())
 							setParameters += parameters[i];
 						else
@@ -147,8 +139,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 't':
 						if (channel->getTopicOperatorsOnlyState()) {
 							channel->setTopicOperatorsOnlyState(false);
-							setModes += '-';
-							setModes += 't';
+							setModes += "-t";
 						}
 						break;
 				}		
@@ -159,5 +150,6 @@ void	Server::executeModes(Client& client, Channel* channel)
 	response = ":" + client.getNick() + " " + "Mode" + " " + channel->getChannelName() + " " + setModes;
 	if (!setParameters.empty())
 	response += " " + setParameters;
+	std::cout << "Message to client: " << response << std::endl;
 	MessageServerToClient(client, response);
 }

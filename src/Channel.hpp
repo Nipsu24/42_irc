@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include "Client.hpp"
+#include <functional>
 
 class Client;
 
@@ -57,6 +58,10 @@ public:
 	bool						isClientOperator(Client* client);
 	bool 						isClientInChannel(Client* client);
 	Client*						getClientByNickname(const std::string& nickname);
+	std::size_t					getNumberOfUsersInCh() const;
+	bool						checkForModeRestrictions(Client &client, std::string password,
+										std::function<void(Client&, const std::string&)> messageFunc);
+	bool						isChannelOperator(Client* client);
 	
 
 		class ClientNotOperatorException : public std::exception
@@ -85,8 +90,6 @@ public:
 					const char  *what() const noexcept override;
 	};
 
-
-
 private:
 	std::string					_channelName;
 	std::string					_channelPassw; //empty if no passw for channel
@@ -101,3 +104,17 @@ private:
 	std::string					_parsedModes;
 	std::vector<std::string>	_parsedParameters;
 };
+
+//user limit;
+//invite Only;
+//channel password;
+
+//operator? to set modes
+
+//for lkit:
+//>> @time=2025-01-21T08:37:56.847Z :osmium.libera.chat 482 NoOperator #new_channel24 :You're not a channel operator
+
+//assign channelOperator and self deassign operator role:
+// >> @time=2025-01-21T08:41:51.281Z :UserOperator1!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 +o NoOperator
+// << MODE #new_channel24 -o NoOperator
+// >> @time=2025-01-21T08:41:56.660Z :NoOperator!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 -o NoOperator
