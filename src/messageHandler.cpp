@@ -77,6 +77,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
     else
     {
         std::string command;
+		std::string	password;
 		std::cout << "RAW MESSAGE: " << message << std::endl;
         std::istringstream iss(message);
         iss >> command;
@@ -89,7 +90,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::string channelName;
             iss >> channelName;
-            handleJoin(client, channelName);
+			iss >> password;
+            handleJoin(client, channelName, password);
         }
         else if (command == "PRIVMSG")
         {

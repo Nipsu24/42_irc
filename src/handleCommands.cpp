@@ -97,7 +97,7 @@ void Server::handleUserName(Client &client, std::vector<std::string> tokens, int
   via 'new' (to ensure that class will exist further on and not go out of scope when
   function terminates). Respective memory is freed again in destructor of server*/
 
-void	Server::handleJoin(Client &client, std::string channelName)
+void	Server::handleJoin(Client &client, std::string channelName, std::string password)
 {
 	if (channelName == "")
 	{
@@ -111,6 +111,9 @@ void	Server::handleJoin(Client &client, std::string channelName)
 		{
 			if (channelName == availableChannels->getChannelName())
 			{
+				if (!availableChannels->checkForModeRestrictions(client, password,
+					[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
+					return ;
 				availableChannels->addClient(&client);
 				client.setLoggedIn(availableChannels);
 				channelExists = true;

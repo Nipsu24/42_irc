@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include "Client.hpp"
+#include <functional>
 
 class Client;
 
@@ -54,6 +55,9 @@ public:
 	std::vector<Client *>&		getChOperatorList();
 	void						setChOperator(Client* client);
 	void						unsetChOperator(Client* client);
+	std::size_t					getNumberOfUsersInCh() const;
+	bool						checkForModeRestrictions(Client &client, std::string password,
+										std::function<void(Client&, const std::string&)> messageFunc);
 
 private:
 	std::string					_channelName;
@@ -69,3 +73,17 @@ private:
 	std::string					_parsedModes;
 	std::vector<std::string>	_parsedParameters;
 };
+
+//user limit;
+//invite Only;
+//channel password;
+
+//operator? to set modes
+
+//for lkit:
+//>> @time=2025-01-21T08:37:56.847Z :osmium.libera.chat 482 NoOperator #new_channel24 :You're not a channel operator
+
+//assign channelOperator and self deassign operator role:
+// >> @time=2025-01-21T08:41:51.281Z :UserOperator1!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 +o NoOperator
+// << MODE #new_channel24 -o NoOperator
+// >> @time=2025-01-21T08:41:56.660Z :NoOperator!~mariusmei@dsl-hkibng21-54f864-67.dhcp.inet.fi MODE #new_channel24 -o NoOperator
