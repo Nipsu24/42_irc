@@ -125,6 +125,7 @@ void	Server::handleJoin(Client &client, std::string channelName, std::string pas
 			Channel *newChannel = new Channel(channelName);
 			newChannel->setTimestamp();
 			newChannel->addClient(&client);
+			newChannel->setChOperator(&client);
 			_channels.push_back(newChannel);
 			client.setLoggedIn(newChannel);
 		}

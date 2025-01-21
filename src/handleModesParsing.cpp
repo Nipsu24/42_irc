@@ -127,7 +127,7 @@ bool	Server::checkForValidModes(const std::string& message, Client& client, Chan
   If the message string is not empty, it is first checked if the channelName is actually containing a '#' at 0 index. If this is not the case,
   the parsed channel name is actually the user name and the /mode command is the initial command sent automatically by client when logging in
   to the server. This case is ignored for the time being. Otherwise, if the channelName is indeed starting with '#' it is furthermore checked
-  if the modes given to the command are valid and - if this is the case - the information is passed to the executeModes function.*/
+  if the user has channel operator rights and if the modes given to the command are valid and - if this is the case - the information is passed to the executeModes function.*/
 void Server::handleMode(Client& client, const std::string& channelName, const std::string& message)
 {
 	std::string firstResponse;
@@ -152,6 +152,11 @@ void Server::handleMode(Client& client, const std::string& channelName, const st
 		if (channelName[0] != '#') //checks if channelName is actually nickname of user (when initially connect and not part of any channel yet)
 			return ;
 		channel = getChannelByChannelName(channelName);
+		if (!channel->isChannelOperator(&client)) {
+			firstResponse = "482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
+			MessageServerToClient(client, firstResponse);
+			return ;
+		}
 		if (checkForValidModes(message, client, channel))
 				executeModes(client, channel);
 	}

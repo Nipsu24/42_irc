@@ -223,3 +223,12 @@ bool	Channel::checkForModeRestrictions(Client &client, std::string password, std
 	}
 	return (true);
 }
+
+/*Checks if client is channel operator*/
+bool	Channel::isChannelOperator(Client* client) {
+	auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
+	if (it != _chOperatorList.end())
+		return (true);
+	else
+		return (false);
+}

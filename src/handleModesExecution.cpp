@@ -90,6 +90,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 					case 'o':
 						toAddOperator = getClientByNickname(parameters[i]);
 						channel->setChOperator(toAddOperator);
+						std::cout << parameters[i] << " set as operator" << std::endl;
 						setModes += "+o";
 						if (setParameters.empty())
 							setParameters += parameters[i];
@@ -149,5 +150,6 @@ void	Server::executeModes(Client& client, Channel* channel)
 	response = ":" + client.getNick() + " " + "Mode" + " " + channel->getChannelName() + " " + setModes;
 	if (!setParameters.empty())
 	response += " " + setParameters;
+	std::cout << "Message to client: " << response << std::endl;
 	MessageServerToClient(client, response);
 }

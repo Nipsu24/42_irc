@@ -58,6 +58,7 @@ public:
 	std::size_t					getNumberOfUsersInCh() const;
 	bool						checkForModeRestrictions(Client &client, std::string password,
 										std::function<void(Client&, const std::string&)> messageFunc);
+	bool						isChannelOperator(Client* client);
 
 private:
 	std::string					_channelName;
