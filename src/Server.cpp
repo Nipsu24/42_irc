@@ -72,6 +72,16 @@ void Server::removeClient(int fd) {
 	}
 }
 
+bool Server::checkIfChannelExists(const std::string& channelName) {
+    for (Channel* channel : _channels) {
+        if (channel->getChannelName() == channelName) {
+            return true; 
+        }
+    }
+    return false;
+}
+
+
 /*Adds user(client) to a channel or creates new channel in case channel is not yet existing.
   First checks if channel name already exists in vector array of _channels. If this
   is the case, adds client to the channel. Otherwise creates pointer to a new channel

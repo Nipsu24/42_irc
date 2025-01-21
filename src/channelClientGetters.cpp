@@ -29,6 +29,7 @@ std::vector<Client *>& Server::getClients() {
 	return (_clients);
 }
 
+
 /*Checks if passed channel name exists in vector of channels. Returns true in case channel exists.*/
 bool	Server::channelExists(const std::string& channelName)
 {
@@ -57,6 +58,16 @@ Channel*	Server::getChannelByChannelName(const std::string& channelName)
 Client*	Server::getClientByNickname(const std::string& nickname)
 {
 	const auto& client = getClients();
+	auto it = std::find_if(client.begin(), client.end(), [&nickname](Client* client)
+	{ return client->getNick() == nickname; });
+	if (it != client.end())
+		return (*it);
+	return (nullptr);
+}
+
+Client*	Channel::getClientByNickname(const std::string& nickname)
+{
+	const auto& client = getUsers();
 	auto it = std::find_if(client.begin(), client.end(), [&nickname](Client* client)
 	{ return client->getNick() == nickname; });
 	if (it != client.end())

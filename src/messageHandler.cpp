@@ -95,36 +95,15 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
         else if (command == "TOPIC")
         {
-            std::string channelName;
-            std::string rest;
-            iss >> channelName;
-            std::getline(iss, rest);
-            client.getLoggedIn()->setTopic(&client, channelName, rest);
+            handleTopic(client, message);
         }
-        else if (command == "KICK")
+          else if (command == "KICK")
         {
-            std::string channelName;
-            std::string nick;
-            iss >> channelName;
-            iss >> nick;
-            std::cout << channelName << "in" << nick << std::endl;
-            client.getLoggedIn()->setKick(&client, channelName, nick);
-        }
-        else if (command == "MODE")
-        {
-			std::string channelName;
-            std::string rest;
-            iss >> channelName;
-            std::getline(iss, rest);
-			handleMode(client, channelName, rest);
+            handleKick(client, message);
         }
         else if (command == "INVITE")
         {
-            std::string channelName;
-            std::string nick;
-            iss >> nick;
-            iss >> channelName;
-            client.getLoggedIn()->setInvite(&client, channelName, nick);
+            handleInvite(client, message);
         }
         else if (command == "QUIT")
         {

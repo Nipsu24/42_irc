@@ -67,9 +67,9 @@ public:
 	void						handlePingPong(Client &client);
 
 	// channel handles these
-	void						handleKick(Client &client, std::vector<std::string> tokens, int index);
-	void						handleTopic(Client &client, std::vector<std::string> tokens, int index);
-	void						handleInvite(Client &client, std::vector<std::string> tokens, int index);
+	void						handleKick(Client &client, std::string message);
+	void						handleTopic(Client &client, std::string message);
+	void						handleInvite(Client &client, std::string message);
 	// parseChannelModes.cpp
 	void						handleQuit(Client &client, std::string message);
 	
@@ -90,6 +90,8 @@ public:
 	Client*						getClientByNickname(const std::string& nickname);
 	bool						userIsMemberOfChannel(Client &client, const std::string& channelName);
 
+	bool						checkIfChannelExists(const std::string& channelName);
+	
 private:
 	int							_port = 6667; // Example port
 	std::string					_passwd;

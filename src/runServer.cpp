@@ -60,6 +60,7 @@ void Server::bindAndListen(int server_fd)
 */
 void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
 {
+    
     sockaddr_in client_addr = {};
     socklen_t client_len = sizeof(client_addr);
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
@@ -121,7 +122,6 @@ void Server::runServer()
     bindAndListen(server_fd);
 
     std::vector<struct pollfd> fds;
-    std::vector<Client *> _clients;
 
     // Main event loop
     while (true)
