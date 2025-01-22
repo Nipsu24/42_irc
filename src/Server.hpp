@@ -60,7 +60,7 @@ public:
 	void						handlePass(Client &client, std::vector<std::string> tokens, int index);
 	void						handleJoin(Client &client, std::string channelName, std::string password);
 	void						handlePart(Client &client, std::vector<std::string> tokens, int index);
-	void						handlePrivmsg(Client &client, std::string channelName, const std::string &message);
+	void						handlePrivmsg(Client &client, std::string channelName, std::string firstWord, const std::string &message);
 	
 	// void handlePrivmsg(Client &client, std::vector<std::string> tokens, int index, const std::string &message);
 	void						handleNick(Client &client, std::string nick);

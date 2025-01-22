@@ -50,13 +50,9 @@ void Server::MessageServerToClient(Client client, const std::string &message)
     }
 }
 
-
-
 /*
  * Handle messages from the client
  */
-
-
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
     
@@ -107,9 +103,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::string channelName;
             std::string rest;
+            std::string firstWord;
             iss >> channelName;
+            iss >> firstWord;
             std::getline(iss, rest);
-            handlePrivmsg(client, channelName, rest);
+            handlePrivmsg(client, channelName, firstWord, rest);
         }
         else if (command == "NICK")
         {

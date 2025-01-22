@@ -14,13 +14,31 @@
 #include "Channel.hpp"
 #include <iostream>
 
-void Server::handlePrivmsg(Client &client, const std::string channelName, const std::string &message)
+bool isMessagePrivate(const std::string &message)
 {
+    if(message[0] == ':' && message[message.length()-1] == ':')
+        return true;
+    else
+        return false;
+}
 
-    
-    std::string strippedMessage = message;
-    strippedMessage.erase(0, message.find_first_not_of(' '));
-    std::string response = ":" + client.getNick() + " PRIVMSG " + channelName + message;
+void Server::handlePrivmsg(Client &client, const std::string channelName, std::string firstWord, const std::string &message)
+{    
+    std::string response = ":" + client.getNick() + " PRIVMSG " + channelName+ " " + firstWord  + message;
+    if(isMessagePrivate(firstWord)) // Check if the message is private, and try to send it
+    {
+        std::cout << "Trying send private message: "<< response << std::endl;
+        std::string nick = firstWord.substr(1, firstWord.length()-2);
+        for (Client *_client : _clients)
+        {
+            if (_client->getNick() == nick)
+            {
+                MessageServerToClient(*_client, response);
+                return; // If client is found, return
+            }
+        }
+    }
+    std::cout << "Public message: " << response << std::endl;
     for (Channel *channel : _channels)
     {
         if (channel->getChannelName() == channelName)
@@ -29,11 +47,10 @@ void Server::handlePrivmsg(Client &client, const std::string channelName, const 
             {
                 if (_client != &client)
                 {
-                    MessageServerToClient(*_client, response);
-                    break;
+                    MessageServerToClient(*_client, response);                    
                 }
-            }
-            break;
+            }            
         }
     }
+    
 }
