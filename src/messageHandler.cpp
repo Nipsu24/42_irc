@@ -50,11 +50,16 @@ void Server::MessageServerToClient(Client client, const std::string &message)
     }
 }
 
+
+
 /*
  * Handle messages from the client
  */
+
+
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
+    
     if (client.getState() != REGISTERED)
     {
         std::vector<std::string> tokens = SplitString(message);
@@ -68,9 +73,14 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         {
             std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
             if (token == "CAP")
-                handleCAPLS(client, tokens, i);
-            else if (token == "USER")
+                handleCAPs(client, tokens, i);
+            if (token == "USER")
                 handleUserName(client, tokens, i);
+            if (token == "NICK")
+            {
+                std::cout << "SETNICK FIRST TIME: " + tokens[i + 1] << std::endl;
+                handleNick(client, tokens[i + 1]);
+            }
             i++;
         }
     }
@@ -133,6 +143,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
     }
 }
+
 
 /*
  * Split a string by a delimiter

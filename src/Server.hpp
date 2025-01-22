@@ -53,8 +53,8 @@ public:
 	void						sendToChannelClients(Client *client, std::string message, std::string channelName);
 
 	// handleCommands.cpp
-	void						handleCAPLS(Client &client, std::vector<std::string> tokens, int index);
-	void						handleCapReq(Client &client, std::vector<std::string> tokens, int index);
+	void						handleCAPs(Client &client, const std::vector<std::string>& tokens, int index);
+	//void						handleCapReq(Client &client, std::vector<std::string> tokens, int index);
 	void						handleUserName(Client &client, std::vector<std::string> tokens, int index);
 
 	void						handlePass(Client &client, std::vector<std::string> tokens, int index);
@@ -91,6 +91,7 @@ public:
 	bool						userIsMemberOfChannel(Client &client, const std::string& channelName);
 
 	bool						checkIfChannelExists(const std::string& channelName);
+	bool						clientExists(const std::string& nick);
 	
 private:
 	int							_port = 6667; // Example port

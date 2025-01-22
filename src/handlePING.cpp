@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <arpa/inet.h>
 
 
 
@@ -29,12 +30,17 @@ void Server::handlePingPong(Client &client)
 		std::cout << "channel " << i <<  ": " << channel->getChannelName() << std::endl;
 		i++;
 		
+		
 	}
 	std::cout << "number of clients: " << getClients().size() << std::endl;
 
 	for (Client *client : _clients)
 	{
-		std::cout << "client username:" + client->getUsername() + " nick:" + client->getNick() << std::endl;
+		std::cout << "client: " << client->getFd() 
+          << " from IP: " << inet_ntoa(client->getAddr().sin_addr) 
+          << " username: " << client->getUsername() 
+          << ". nick: " << client->getNick() 
+          << std::endl;
 	}
 }
 

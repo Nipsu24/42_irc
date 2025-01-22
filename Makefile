@@ -37,6 +37,7 @@ fsanitize:
 	$(CC) -o $(NAME) $(SRC_FILES) -g -fsanitize=address -static-libsan
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	@echo "Compiling $<"
 	$(CC) $(FLAGS) -c $< -o $@
 
 $(OBJ_DIR):

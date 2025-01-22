@@ -45,6 +45,8 @@ void Server::handleTopic(Client &client, std::string message)
 		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
 		MessageServerToClient(client, response);
 	}
+
+	
 	//:copper.libera.chat 482 timppa #testchannel24 :You're not a channel operator
 	//:copper.libera.chat 403 timppa #jeecahnnel :No such channel
 	//:copper.libera.chat 442 timppa #testchannel24 :You're not on that channel

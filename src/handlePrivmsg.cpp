@@ -17,8 +17,10 @@
 void Server::handlePrivmsg(Client &client, const std::string channelName, const std::string &message)
 {
 
-    std::string response = ":" + client.getNick() + " PRIVMSG " + channelName + message + "\r\n";
-
+    
+    std::string strippedMessage = message;
+    strippedMessage.erase(0, message.find_first_not_of(' '));
+    std::string response = ":" + client.getNick() + " PRIVMSG " + channelName + message;
     for (Channel *channel : _channels)
     {
         if (channel->getChannelName() == channelName)
