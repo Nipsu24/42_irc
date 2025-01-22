@@ -125,7 +125,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
         else if (command == "TOPIC")
         {
-            handleTopic(client, message);
+			std::string channelName;
+			iss >> channelName;
+			std::string rest;
+			std::getline(iss, rest);
+			handleTopic(client, channelName, rest);
         }
           else if (command == "KICK")
         {

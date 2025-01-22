@@ -68,7 +68,7 @@ public:
 
 	// channel handles these
 	void						handleKick(Client &client, std::string message);
-	void						handleTopic(Client &client, std::string message);
+	void						handleTopic(Client &client, const std::string& channelName, std::string message);
 	void						handleInvite(Client &client, std::string message);
 	// parseChannelModes.cpp
 	void						handleQuit(Client &client, std::string message);

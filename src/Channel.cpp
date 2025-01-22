@@ -102,16 +102,14 @@ std::string	Channel::getMode() const
 	return (activeModes);
 }
 
-void Channel::setTopic(Client *client, const std::string& channelName, std::string& rest)
+void Channel::setTopic(Client *client, const std::string& topic)
 {
-	(void)channelName;
-	if (!isClientOperator(client))
+	if (!isClientInChannel(client))
+		throw ClientNotInChannelException();
+	if (_topicOperatorsOnly)
 		throw ClientNotOperatorException();
-	std::cout << rest << std::endl;
-	if (_topicOperatorsOnly == false)
-	{ // code to be added in if statement: "|| client has operator status"
-		_topic = rest;
-		std::cout << "INSERT USERNAME " << "changed the topic of #" << _channelName << " to: " << _topic << std::endl;
+	else {
+		_topic = topic;
 	}
 }
 
