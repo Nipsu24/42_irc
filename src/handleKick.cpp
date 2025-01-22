@@ -43,14 +43,15 @@ void Server::handleKick(Client &client, std::string message)
 		MessageServerToClient(client, response);
 	}
 	catch (const Channel::NickNotExistException &e) {
-		std::string response = ":localhost 441 " + client.getNick() + " " + nick = " " + channelName + " :They aren't on that channel";
+		std::string response = ":localhost 441 " + client.getNick() + " " + nick + " " + channelName + " :They aren't on that channel";
 		MessageServerToClient(client, response);
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
 		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
 		MessageServerToClient(client, response);
 	}
+	
 
-	std::string response = ":" + client.getNick() + "!~localhost KICK" + channelName + nick + ":" + nick;
+	std::string response = ":" + client.getNick() + "!~localhost KICK " + channelName + " " + nick + " :" + nick;
 	MessageServerToClient(client, response);
 }
