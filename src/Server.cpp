@@ -87,3 +87,42 @@ bool Server::checkIfChannelExists(const std::string& channelName) {
     }
     return false;
 }
+
+
+bool Server::clientExists(const std::string& nick){
+	for (Client* client : _clients)
+	{
+		if (client->getNick() == nick)
+			return true;
+	}
+	return false;
+}
+
+
+void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, int index)
+{
+	std::string response;
+	if (tokens[index + 1] == "LS")
+	{
+		client.setState(REGISTERING);
+		std::cout << "Received CAP LS from client" << client.getFd() << ": " << client.getNick() << std::endl; // Debugging
+		response = "CAP * LS";
+		MessageServerToClient(client, response);
+	}
+	else if (tokens[index + 1] == "REQ")
+	{
+		response = ":localhost CAP " + client.getNick() + " ACK :multi-prefix";
+		MessageServerToClient(client, response);
+	}
+	else if (tokens[index + 1] == "END")
+	{
+
+		client.setState(REGISTERED);
+		response = ":001 " + client.getNick() + ":Welcome to the Internet Relay Network " + client.getNick();
+		MessageServerToClient(client, response);
+	}
+	else
+	{
+		std::cerr << "Invalid CAP message" << std::endl;
+	}
+}

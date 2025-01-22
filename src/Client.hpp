@@ -44,6 +44,7 @@ public:
     sockaddr_in getAddr() const;
     void setState(clientState state);
     clientState getState() const;
+    
     bool cap_status;
 
 private:
