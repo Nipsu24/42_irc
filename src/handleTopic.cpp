@@ -17,16 +17,24 @@
 #include <sstream>
 #include <algorithm>
 
-void Server::handleTopic(Client &client, std::string message)
+/*Needed to clear out any whitespace from topic message string*/
+void removeWhitespace(std::string &str) {
+    str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+}
+
+/*Checks if conditions for setting topic are met and if this is the case, sets respective
+  topic for channel. First trmis topic message string by any white space, then checks if 
+  channel exists, and in the setTopic function varifies if client is part of the channel
+  and if the topic operator only mode is active. Catches respective exceptions thrown by
+  setTopic function.*/
+void Server::handleTopic(Client &client, const std::string& channelName, std::string message)
 {
 	std::istringstream iss(message);
-	std::string command;
-	std::string channelName;
-	std::string topic;
-	iss >> channelName;
-	std::getline(iss, topic);
-	topic.erase(0, topic.find_first_not_of(' '));
-	
+	std::getline(iss, message);
+
+	message.erase(0, message.find_first_not_of(' '));
+	std::cout << "MESSAGE: " << message << std::endl;
+	removeWhitespace(message);
 
 	if (!checkIfChannelExists(channelName))
 	{
@@ -35,19 +43,16 @@ void Server::handleTopic(Client &client, std::string message)
 		return;
 	}
 	try{
-		getChannelByChannelName(channelName)->setTopic(&client, channelName, topic);
+		getChannelByChannelName(channelName)->setTopic(&client, message);
 	}
 	catch (const Channel::ClientNotOperatorException &e) {
 		std::string response = ":localhost 482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
 		MessageServerToClient(client, response);
 	}
-	catch (const Channel::ChannelNotFoundException &e) {
+	catch (const Channel::ClientNotInChannelException &e) {
 		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
 		MessageServerToClient(client, response);
 	}
-
-	
-	//:copper.libera.chat 482 timppa #testchannel24 :You're not a channel operator
-	//:copper.libera.chat 403 timppa #jeecahnnel :No such channel
-	//:copper.libera.chat 442 timppa #testchannel24 :You're not on that channel
+	std::string response = ":" + client.getNick() + " " + "TOPIC " + channelName + " " + message;
+	MessageServerToClient(client, response);
 }

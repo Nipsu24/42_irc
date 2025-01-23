@@ -33,7 +33,7 @@ public:
 	std::string					getChannelPassw() const;
 	void						setChannelPassw(const std::string& password);
 	std::string					getMode() const;
-	void						setTopic(Client *client, const std::string& channelName, std::string& rest);
+	void						setTopic(Client *client, const std::string& topic);
 	void						setKick(Client *client, const std::string& channelName, std::string& rest);
 	void						setInvite(Client *client, const std::string& channelName, std::string& rest);
 	std::vector<Client*>&		getUsers();
