@@ -58,16 +58,18 @@ void Server::handleInvite(Client &client, std::string message)
 		MessageServerToClient(client, response);
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
-		std::string response = ":localhost 441 " + client.getNick() + " " + nick = " " + channelName + " :They aren't on that channel";
+		std::string response = ":localhost 441 " + client.getNick() + " " + nick + " " + channelName + " :They aren't on that channel";
 		MessageServerToClient(client, response);
 	}
 	catch (const Channel::ClientAlreadyInChannelException &e) {
-		std::string response = ":localhost 443 " + client.getNick() + " " + nick = " " + channelName + " :is already on channel";
+		std::string response = ":localhost 443 " + client.getNick() + " " + nick + " " + channelName + " :is already on channel";
+		MessageServerToClient(client, response);
 	}
 	std::cout << "everything ok, lets invite" << std::endl;
-	std::string response = "INVITE " + nick + " " + channelName;
+	std::string response = ":localhost 341 " + client.getNick() + " " + nick + " " + channelName;
 	MessageServerToClient(client, response);
-	
+	std::string clientInviteMessage = ":" + client.getNick() + " INVITE " + nick + " :" + channelName;
+	MessageServerToClient(*clientToInvite, clientInviteMessage);
 }	
 
 

@@ -57,14 +57,21 @@ std::string Channel::getChannelPassw() const
 }
 
 bool Channel::isClientOperator(Client* client) {
-    
-    auto it = std::find(_chOperatorList.begin(), _chOperatorList.end(), client);
-    return it != _chOperatorList.end();
+    for (Client* user : _chOperatorList) {
+        if (user == client) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Channel::isClientInChannel(Client* client) {
-	auto it = std::find(_userList.begin(), _userList.end(), client);
-	return it != _userList.end();
+    for (Client* user : _userList) {
+        if (user == client) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /*Function for setting the password of a channel*/
