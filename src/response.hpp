@@ -57,8 +57,8 @@
 /* Numeric Responses */
 
 #define RPL_WELCOME(nickname)                             "001 " + nickname + " :Welcome " + nickname + " to the ft_irc network"
-//#define RPL_NAMREPLY(source, channel, users)            "353 " + source + " = " + channel + " :" + users
-//#define RPL_ENDOFNAMES(source, channel)                 "366 " + source + " " + channel + " :End of /NAMES list."
+#define RPL_NAMREPLY(nickname, channelname, users)            "353 " + nickname + " @ " + channelname + " :@" + users
+#define RPL_ENDOFNAMES(source, channelname)                 "366 " + source + " " + channelname + " :End of /NAMES list."
 
 
 /* Command Responses */
@@ -66,7 +66,7 @@
 #define RPL_INVITING(clientnick, nick, channelname)		":" + clientnick + " INVITE " + nick + " " + channelname
 #define RPL_NICK(oldnick, username, nick)				":" + oldNick + " NICK :" + nick
 #define RPL_TOPIC(clientnick, channelname, newtopic)	":" + clientnick + " TOPIC " + channelName + " " + newtopic
-//#define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel
+#define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel
 //#define RPL_PART(source, channel)                       ":" + source + " PART :" + channel
 //#define RPL_PING(source, token)                         ":" + source + " PONG :" + token
 //#define RPL_PRIVMSG(source, target, message)            ":" + source + " PRIVMSG " + target + " :" + message

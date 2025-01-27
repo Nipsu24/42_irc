@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -31,18 +32,26 @@ void	Server::handleJoin(Client &client, std::string channelName, std::string pas
 	}
 	else
 	{
+		std::string namesList = "";
 		std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
 		bool channelExists = false;
 		for (Channel *availableChannels : _channels)
 		{
 			if (channelName == availableChannels->getChannelName())
 			{
+				std::string namesList = "";
+				
+				for (Client *clientsIn : availableChannels->getUsers())
+				{
+					namesList.append(clientsIn->getNick() + " ");
+				}
 				if (!availableChannels->checkForModeRestrictions(client, password,
 					[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
 					return ;
 				availableChannels->addClient(&client);
-				std::string response = ":" + client.getNick() + " JOIN " + channelName;
-				MessageServerToClient(client, response);
+				MessageServerToClient(client, RPL_JOIN(client.getNick(), channelName));
+				MessageServerToClient(client, RPL_NAMREPLY(client.getNick(), channelName, namesList));
+				MessageServerToClient(client, RPL_ENDOFNAMES(client.getNick(), channelName));
 				channelExists = true;
 				break;
 			} 
@@ -55,12 +64,9 @@ void	Server::handleJoin(Client &client, std::string channelName, std::string pas
 			_channels.push_back(newChannel);
 			newChannel->setChOperator(&client);
 			//sends message to client that client is joined and operator
-			std::string response = ":" + client.getNick() + " JOIN " + channelName;
-			MessageServerToClient(client, response);
-			std::string setOperatorResponse = ":localhost 353 " + client.getNick() + " @ " + channelName + " :@" + client.getNick();
-			MessageServerToClient(client, setOperatorResponse);
-			std::string setEnd = ":localhost 366 " + client.getNick() + " " + channelName + " :End of /NAMES list.";
-			MessageServerToClient(client, setEnd);
+			MessageServerToClient(client, RPL_JOIN(client.getNick(), channelName));
+			MessageServerToClient(client, RPL_NAMREPLY(client.getNick(), channelName, client.getNick()));
+			MessageServerToClient(client, RPL_ENDOFNAMES(client.getNick(), channelName));
 		}
 	}
 }
