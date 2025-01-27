@@ -33,6 +33,7 @@
 #define ERR_CHANOPRIVSNEEDED(nick, channelname)           "482 " + nick + " " + channelname + " :You're not channel operator"
 #define ERR_USERONCHANNEL(clientnick, usernick, channelname)  "443 " + clientnick + " " + nick + " " + channelName + " :is already on channel"
 #define ERR_USERNOTINCHANNEL(clientnick, usernickname, channelname) "441 " + nick + " " + usernickname + " " + channelname + " :They aren't on that channel"
+#define ERR_NOTONCHANNEL(clientnick, channelname)                  "442 " + clientnick + " " + channelname + " :They aren't on that channel"
 
 
 //#define ERR_NOTONCHANNEL(source, channel)               "442 " + source + " " + channel + " :You're not on that channel"
@@ -55,7 +56,7 @@
 
 /* Numeric Responses */
 
-//#define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
+#define RPL_WELCOME(source)                             "001 " + source + " :Welcome " + source + " to the ft_irc network"
 //#define RPL_NAMREPLY(source, channel, users)            "353 " + source + " = " + channel + " :" + users
 //#define RPL_ENDOFNAMES(source, channel)                 "366 " + source + " " + channel + " :End of /NAMES list."
 
@@ -63,7 +64,8 @@
 /* Command Responses */
 
 #define RPL_INVITING(clientnick, nick, channelname)		":" + clientnick + " INVITE " + nick + " " + channelname
-#define RPL_NICK(oldnick, username, nick)				":" + oldNick + "!~" + username + "@localhost NICK :" + nick
+#define RPL_NICK(oldnick, username, nick)				":" + oldNick + " NICK :" + nick
+#define RPL_TOPIC(clientnick, channelname, newtopic)	":" + clientnick + " TOPIC " + channelName + " " + newtopic
 //#define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel
 //#define RPL_PART(source, channel)                       ":" + source + " PART :" + channel
 //#define RPL_PING(source, token)                         ":" + source + " PONG :" + token
