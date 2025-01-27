@@ -24,11 +24,6 @@
  */
 void Server::handleUserName(Client &client, std::vector<std::string> tokens, int index)
 {
-
-	
 	client.setUsername(tokens[index + 1]);
-	std::cout << "Received USER from client: " << client.getFd() << ": " << client.getNick() << std::endl;
-	std::string response = "001 " + client.getNick() + " :Welcome to the Internet Relay Network " + client.getNick();
-	
 	MessageServerToClient(client, RPL_WELCOME(client.getNick()));
 }
