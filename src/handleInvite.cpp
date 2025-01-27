@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -27,24 +28,16 @@ void Server::handleInvite(Client &client, std::string message)
 	iss >> command;
 	iss >> nick;
 	iss >> channelName;
-	//check if channelname is correct, this should not do enaything in irssi, just receive message WORKS OK
+	
 	if (!checkIfChannelExists(channelName))
 	{
-		std::cout << "channelexists does not exist" << std::endl;
-		std::string response = ":localhost 403 " + client.getNick() + " " + channelName + " :No such channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 		return;
 	}
-	//checks if nickname is in use
-
-	std::cout << "try to invite2" << std::endl;
 	Client* clientToInvite = getClientByNickname(nick);
 	if (clientToInvite == nullptr)
 	{
-		std::cout << "client exists noot" << std::endl;
-		// Send error response to the client
-		std::string response = ":localhost 401 " + client.getNick() + " " + nick +" " + channelName + " :No such nick/channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOSUCHNICK(client.getNick(), nick));
 		return; // Exit the function after handling the error
 	}
 	
@@ -54,22 +47,16 @@ void Server::handleInvite(Client &client, std::string message)
 		getChannelByChannelName(channelName)->setInvite(&client, channelName, nick);
 	}
 	catch (const Channel::ClientNotOperatorException &e) {
-		std::string response = ":localhost 482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
-		std::string response = ":localhost 441 " + client.getNick() + " " + nick + " " + channelName + " :They aren't on that channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_USERNOTINCHANNEL(client.getNick(), nick, channelName));
 	}
 	catch (const Channel::ClientAlreadyInChannelException &e) {
-		std::string response = ":localhost 443 " + client.getNick() + " " + nick + " " + channelName + " :is already on channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_USERONCHANNEL(client.getNick(), nick, channelName));
 	}
-	std::cout << "everything ok, lets invite" << std::endl;
-	std::string response = ":localhost 341 " + client.getNick() + " " + nick + " " + channelName;
-	MessageServerToClient(client, response);
-	std::string clientInviteMessage = ":" + client.getNick() + " INVITE " + nick + " :" + channelName;
-	MessageServerToClient(*clientToInvite, clientInviteMessage);
+	//everything ok, lets invite
+	MessageServerToClient(*clientToInvite, RPL_INVITING(client.getNick(), nick, channelName));
 }
 
 
