@@ -48,7 +48,6 @@ void Server::handleTopic(Client &client, const std::string& channelName, std::st
 		MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
-		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
 		MessageServerToClient(client, ERR_NOTONCHANNEL(client.getNick(), channelName));
 	}
 	std::string response = ":" + client.getNick() + " " + "TOPIC " + channelName + " " + message;
