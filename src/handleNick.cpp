@@ -11,6 +11,7 @@
 /* **************************************************************************************** */
 
 #include "Server.hpp"
+#include "response.hpp"
 #include "iostream"
 
 void Server::handleNick(Client &client, std::string nick)
@@ -29,15 +30,11 @@ void Server::handleNick(Client &client, std::string nick)
 	else
 	{
 		if (clientExists(nick))
-		{
-			std::string response = ":localhost 433 " + oldNick + " " + nick + ":Nickname is already in use.";
-			MessageServerToClient(client, response);
-		}
+			MessageServerToClient(client, ERR_NICKNAMEINUSE(oldNick, nick));
 		else
 		{
 			client.setNick(nick);
-			std::string response = ":" + oldNick + "!~" + client.getUsername() + "@localhost NICK :" + client.getNick();
-			MessageServerToClient(client, response);
+			MessageServerToClient(client, RPL_NICK(oldNick, client.getUsername(), client.getNick()));
 		}
 	}
 }
