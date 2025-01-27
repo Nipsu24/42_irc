@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -33,26 +34,23 @@ void Server::handleTopic(Client &client, const std::string& channelName, std::st
 	std::getline(iss, message);
 
 	message.erase(0, message.find_first_not_of(' '));
-	std::cout << "MESSAGE: " << message << std::endl;
 	removeWhitespace(message);
 
 	if (!checkIfChannelExists(channelName))
 	{
-		std::string response = ":localhost 403 " + client.getNick() + " " + channelName + " :No such channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 		return;
 	}
 	try{
 		getChannelByChannelName(channelName)->setTopic(&client, message);
 	}
 	catch (const Channel::ClientNotOperatorException &e) {
-		std::string response = ":localhost 482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
 		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOTONCHANNEL(client.getNick(), channelName));
 	}
 	std::string response = ":" + client.getNick() + " " + "TOPIC " + channelName + " " + message;
-	MessageServerToClient(client, response);
+	MessageServerToClient(client, RPL_TOPIC(client.getNick(), channelName, message));
 }
