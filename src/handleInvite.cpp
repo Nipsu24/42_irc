@@ -27,7 +27,7 @@ void Server::handleInvite(Client &client, std::string message)
 	iss >> command;
 	iss >> nick;
 	iss >> channelName;
-	//check if channelname is correct
+	//check if channelname is correct, this should not do enaything in irssi, just receive message WORKS OK
 	if (!checkIfChannelExists(channelName))
 	{
 		std::cout << "channelexists does not exist" << std::endl;
@@ -43,7 +43,7 @@ void Server::handleInvite(Client &client, std::string message)
 	{
 		std::cout << "client exists noot" << std::endl;
 		// Send error response to the client
-		std::string response = ":localhost 401 " + client.getNick() + " " + channelName + " :No such nick/channel";
+		std::string response = ":localhost 401 " + client.getNick() + " " + nick +" " + channelName + " :No such nick/channel";
 		MessageServerToClient(client, response);
 		return; // Exit the function after handling the error
 	}
@@ -70,7 +70,7 @@ void Server::handleInvite(Client &client, std::string message)
 	MessageServerToClient(client, response);
 	std::string clientInviteMessage = ":" + client.getNick() + " INVITE " + nick + " :" + channelName;
 	MessageServerToClient(*clientToInvite, clientInviteMessage);
-}	
+}
 
 
 //:iridium.libera.chat 341 timo_ timo___ #testii2

@@ -87,7 +87,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 							setParameters += " " + parameters[i];
 						i++;
 						break;
-					case 'o':
+					case 'o':  
 						toAddOperator = getClientByNickname(parameters[i]);
 						channel->setChOperator(toAddOperator);
 						std::cout << parameters[i] << " set as operator" << std::endl;

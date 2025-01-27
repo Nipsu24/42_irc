@@ -31,6 +31,7 @@ void	Server::handleJoin(Client &client, std::string channelName, std::string pas
 	}
 	else
 	{
+		std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
 		bool channelExists = false;
 		for (Channel *availableChannels : _channels)
 		{
@@ -40,20 +41,29 @@ void	Server::handleJoin(Client &client, std::string channelName, std::string pas
 					[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
 					return ;
 				availableChannels->addClient(&client);
+				std::string response = ":" + client.getNick() + " JOIN " + channelName;
+				MessageServerToClient(client, response);
 				channelExists = true;
 				break;
 			} 
 		}
 		if (channelExists == false)
 		{
+			
 			Channel *newChannel = new Channel(channelName);
 			newChannel->addClient(&client);
 			_channels.push_back(newChannel);
 			newChannel->setChOperator(&client);
+			//sends message to client that client is joined and operator
+			std::string response = ":" + client.getNick() + " JOIN " + channelName;
+			MessageServerToClient(client, response);
+			std::string setOperatorResponse = ":localhost 353 " + client.getNick() + " @ " + channelName + " :@" + client.getNick();
+			MessageServerToClient(client, setOperatorResponse);
+			std::string setEnd = ":localhost 366 " + client.getNick() + " " + channelName + " :End of /NAMES list.";
+			MessageServerToClient(client, setEnd);
 		}
-		std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
-		std::string response = ":" + client.getNick() + " JOIN " + channelName + "\r\n";
-		MessageServerToClient(client, response);
 	}
 }
 
+//>> :zirconium.libera.chat 353 timo_ @ #testi222 :@timo_   
+//:zirconium.libera.chat 366 timo_ #testi222 :End of /NAMES list.
