@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -26,12 +27,14 @@ void Server::handleKick(Client &client, std::string message)
 	iss >> command;
 	iss >> channelName;
 	iss >> nick;
+	std::string reason;
+	std::getline(iss, reason);
 
+	reason.erase(0, reason.find_first_not_of(' '));
 
 	if (!checkIfChannelExists(channelName))
 	{
-		std::string response = ":localhost 403 " + client.getNick() + " " + channelName + " :No such channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 		return;
 	}
 	//Channel handles this
@@ -39,19 +42,13 @@ void Server::handleKick(Client &client, std::string message)
 		getChannelByChannelName(channelName)->setKick(&client, channelName, nick);
 	}
 	catch (const Channel::ClientNotOperatorException &e) {
-		std::string response = ":localhost 482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
 	}
 	catch (const Channel::NickNotExistException &e) {
-		std::string response = ":localhost 441 " + client.getNick() + " " + nick + " " + channelName + " :They aren't on that channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_USERNOTINCHANNEL(client.getNick(), nick, channelName));
 	}
 	catch (const Channel::ClientNotInChannelException &e) {
-		std::string response = ":localhost 442 " + client.getNick() + " " + channelName + " :You're not on that channel";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NOTONCHANNEL(client.getNick(), channelName));
 	}
-	
-
-	std::string response = ":" + client.getNick() + "!~localhost KICK " + channelName + " " + nick + " :" + nick;
-	MessageServerToClient(client, response);
+	MessageServerToClient(client, RPL_KICK(client.getNick(), channelName, nick, reason));
 }
