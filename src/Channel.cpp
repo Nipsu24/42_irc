@@ -17,6 +17,7 @@
 #include <chrono>
 #include <ctime>
 #include <functional>
+#include "response.hpp"
 
 /* ************************************************Constructor Section START*************************************** */
 Channel::Channel() {}
@@ -260,21 +261,18 @@ bool	Channel::checkForModeRestrictions(Client &client, std::string password, std
 
 	if (!_channelPassw.empty()) {
 		if (_channelPassw != password) {
-			response = "475 " + client.getNick() + " " + _channelName + " :Cannot join channel (+k) - bad key";
-			messageFunc(client, response);
+			messageFunc(client, ERR_BADCHANNELKEY(client.getNick(), _channelName));
 			return (false);
 		}
 	}
 	if (_userLimit > -1) {
 		if (getNumberOfUsersInCh() >= static_cast<std::size_t>(_userLimit)) {
-			response = "471 " + client.getNick() + " " + _channelName + " :Cannot join channel (+l) - channel is full, try again later";
-			messageFunc(client, response);
+			messageFunc(client, ERR_CHANNELISFULL(client.getNick(), _channelName));
 			return (false);
 		}
 	}
 	if (_inviteOnlyEnabled) {
-		response = "473 " + client.getNick() + " " + _channelName + " :Cannot join channel (+i) - you must be invited";
-		messageFunc(client, response);
+		messageFunc(client, ERR_INVITEONLYCHAN(client.getNick(), _channelName));
 		return (false);
 	}
 	return (true);

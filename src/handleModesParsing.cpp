@@ -17,6 +17,7 @@
 #include <unordered_set>
 #include <sstream>
 #include "Client.hpp"
+#include "response.hpp"
 
 /*Helper function of checkForValidModes, cheks if all strings of vector are all filled, if parameter for l mode only
   consists of digits and if parameter for o contains user which is member of the channel*/
@@ -27,19 +28,17 @@ bool	Server::checkValidParameter(int index, std::vector<std::string> parameter, 
 	if ((std::all_of(parameter[index].begin(), parameter[index].end(), [](unsigned char ch) { return std::isspace(ch); }))
 		|| parameter[index].empty())
 	{
-		response = "461 " + client.getNick() + " MODE :Not enough parameters";
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, ERR_NEEDMOREPARAMS(client.getNick()));
+		// response = "461 " + client.getNick() + " MODE :Not enough parameters";
+		// MessageServerToClient(client, response);
 		return (false);
 	}
 	if (mode == 'l' && !std::all_of(parameter[index].begin(), parameter[index].end(), ::isdigit))
-	{
-		response = "401 " + client.getNick() + " " + parameter[index] + " :No such nick/channel";
-		MessageServerToClient(client, response);
 		return (false);
-	}
 	if (mode == 'o') {
 		Client* client = getClientByNickname(parameter[index]);
 		if (!userIsMemberOfChannel(*client, channel->getChannelName())) {
+			MessageServerToClient(*client, ERR_NOTONCHANNEL(client->getNick(), channel->getChannelName()));
 			return (false);
 		}
 	}
@@ -65,8 +64,7 @@ bool	Server::checkForValidModes(const std::string& message, Client& client, Chan
 	iss >> modes;
 	for (char c : modes) {
 		if (allowedChars.find(c) == allowedChars.end()) {
-			response = "472 " + client.getNick() + " " + c + " :is an unknown mode char to me";
-			MessageServerToClient(client, response);
+			MessageServerToClient(client, ERR_UNKNOWNMODE(client.getNick(), c));
 			return (false);
 		}
 		if (c == '+' || c == '-')
@@ -130,31 +128,24 @@ bool	Server::checkForValidModes(const std::string& message, Client& client, Chan
   if the user has channel operator rights and if the modes given to the command are valid and - if this is the case - the information is passed to the executeModes function.*/
 void Server::handleMode(Client& client, const std::string& channelName, const std::string& message)
 {
-	std::string firstResponse;
-	std::string	secondResponse;
 	Channel* channel;
 	if ((std::all_of(message.begin(), message.end(), [](unsigned char ch) { return std::isspace(ch); })) || message.empty()) {
 		if (channelExists(channelName)) {
 			if (userIsMemberOfChannel(client, channelName)) {
 				channel = getChannelByChannelName(channelName);
-				firstResponse = "324 " + client.getNick() + " " + channelName + " " + channel->getMode();
-				secondResponse = "329 " + client.getNick() + " " + channelName + " " + channel->getTimestamp();
-				MessageServerToClient(client, firstResponse);
-				MessageServerToClient(client, secondResponse);
+				MessageServerToClient(client, RPL_CHANNELMODEIS(client.getNick(), channelName, channel->getMode()));
+				MessageServerToClient(client, RPL_CREATIONTIME(client.getNick(), channelName, channel->getTimestamp()));
 			}
 		}
-		else {
-			firstResponse = "403 " + client.getNick() + " " + channelName + ":No such channel"; 
-			MessageServerToClient(client, firstResponse);
-		}
+		else
+			MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 	}
 	else {
-		if (channelName[0] != '#') //checks if channelName is actually nickname of user (when initially connect and not part of any channel yet)
+		if (channelName[0] != '#')
 			return ;
 		channel = getChannelByChannelName(channelName);
 		if (!channel->isChannelOperator(&client)) {
-			firstResponse = "482 " + client.getNick() + " " + channelName + " :You're not a channel operator";
-			MessageServerToClient(client, firstResponse);
+			MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
 			return ;
 		}
 		if (checkForValidModes(message, client, channel))
