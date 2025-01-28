@@ -69,6 +69,7 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 			{
 				
 				Channel *newChannel = new Channel(channelName);
+				newChannel->setTimestamp();
 				newChannel->addClient(&client);
 				_channels.push_back(newChannel);
 				newChannel->setChOperator(&client);
