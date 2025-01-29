@@ -22,9 +22,10 @@ bool isMessagePrivate(const std::string &message)
         return false;
 }
 
-void Server::handlePrivmsg(Client &client, const std::string channelName, std::string firstWord, const std::string &message)
+void Server::handlePrivmsg(Client &client, const std::string channelName, std::string firstWord, std::string &message)
 {    
-    std::string response = ":" + client.getNick() + " PRIVMSG " + channelName+ " " + firstWord  + message;
+    removeWhitespace(message);
+	std::string response = ":" + client.getNick() + " PRIVMSG " + channelName+ " " + firstWord  + message;
     if(isMessagePrivate(firstWord)) // Check if the message is private, and try to send it
     {
         std::cout << "Trying send private message: "<< response << std::endl;

@@ -18,28 +18,42 @@
 #include <sstream>
 #include <algorithm>
 
+/*Kicks clients from channels, checks first if channel exists, then uses try / catch to account for potential
+  errors such as "no operator", "user not in channel" or "user does not exist". Furthermore, checks if reason
+  is empty or only consists of whitespace and ':'. If this is the case, reason is treated as empty and the user's
+  nickname is passed to message function as "reason".*/
 void Server::handleKick(Client &client, std::string message)
 {
-	std::istringstream iss(message);
-	std::string command;
-	std::string channelName;
-	std::string nick;
+	std::istringstream	iss(message);
+	std::string			command;
+	std::string			channelName;
+	std::string			nick;
+	std::string			reason;
+	bool				reasonExist = false;
 	iss >> command;
 	iss >> channelName;
 	iss >> nick;
-	std::string reason;
 	std::getline(iss, reason);
 
 	reason.erase(0, reason.find_first_not_of(' '));
-
 	if (!checkIfChannelExists(channelName))
 	{
 		MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));
 		return;
 	}
+	if (!reason.empty() && !(std::all_of(reason.begin(), reason.end(), [](unsigned char ch) { return std::isspace(ch) || ch == ':'; }))) {
+		reasonExist = true;
+		removeWhitespace(reason);
+		if (reason[0] == ':')
+			reason.erase(0, 1);
+	}
 	//Channel handles this
 	try{
 		getChannelByChannelName(channelName)->setKick(&client, channelName, nick);
+		if (reasonExist == true)
+			MessageServerToClient(client, RPL_KICK(client.getNick(), channelName, nick, reason));
+		else
+			MessageServerToClient(client, RPL_KICK(client.getNick(), channelName, nick, nick));
 	}
 	catch (const Channel::ClientNotOperatorException &e) {
 		MessageServerToClient(client, ERR_CHANOPRIVSNEEDED(client.getNick(), channelName));
@@ -50,5 +64,4 @@ void Server::handleKick(Client &client, std::string message)
 	catch (const Channel::ClientNotInChannelException &e) {
 		MessageServerToClient(client, ERR_NOTONCHANNEL(client.getNick(), channelName));
 	}
-	MessageServerToClient(client, RPL_KICK(client.getNick(), channelName, nick, reason));
 }
