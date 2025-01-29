@@ -58,6 +58,7 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 						[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
 						return ;
 					availableChannels->addClient(&client);
+					//for loop to broadcast join message to all clients in the channel
 					for (Client *member : getChannelByChannelName(channelName)->getUsers()) {
 						MessageServerToClient(*member, RPL_JOIN(client.getNick(), channelName));
 						MessageServerToClient(*member, RPL_NAMREPLY(client.getNick(), channelName, namesList));
