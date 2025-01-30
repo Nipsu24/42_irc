@@ -16,7 +16,9 @@
 </h2>
 
 ## About
-The repository contains a custom made `Internet Relay Chat server (IRC)` to which connection can be established via the `IRSSI` client.
+The repository contains a custom made `Internet Relay Chat server (IRC)` to which connection can be established via the `IRSSI` client. Programming is done in collaboration with:  
+- Timo Saari (https://github.com/LandSurroundedByWater)  
+- Matti Rinkinen (https://github.com/MRinkinen)
 
 ## Program
 The server utelises C++ socket programming in order to create a TCP socket which operates over IP4. The server binds to the socket and furhter listens to incoming connection requests of clients. 
