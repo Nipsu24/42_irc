@@ -1,3 +1,6 @@
+
+<h3 align="center" style="color:red;">!🤖 SERVER CURRENTLY STILL IN DEVELOPMENT - WORK IN PROGRESS 🤖!</h3>
+
 <h1 align="center">Internet Relay Chat Server (IRC)</h1>
 
 > Hive Helsinki (School 42) 13th project (Rank05/06) of core curriculum.
@@ -13,7 +16,7 @@
 </h2>
 
 ## About
-The repository contains a custom made `Internet Relay Chat server (IRC)` to which one can connect via the `IRSSI` client.
+The repository contains a custom made `Internet Relay Chat server (IRC)` to which connection can be established via the `IRSSI` client.
 
 ## Program
 The server utelises C++ socket programming in order to create a TCP socket which operates over IP4. The server binds to the socket and furhter listens to incoming connection requests of clients. 
