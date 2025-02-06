@@ -19,6 +19,8 @@
 #include <poll.h>
 #include <system_error>
 #include "Server.hpp"
+#include "response.hpp"
+
 
 Server::Server() {}
 
@@ -118,8 +120,7 @@ void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, 
 	{
 
 		client.setState(REGISTERED);
-		response = ":001 " + client.getNick() + ":Welcome to the Internet Relay Network " + client.getNick();
-		MessageServerToClient(client, response);
+		MessageServerToClient(client, RPL_WELCOME(client.getNick(), client.getUsername()));
 	}
 	else
 	{

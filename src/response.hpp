@@ -21,10 +21,14 @@
 
 //nick
 #define ERR_NOSUCHNICK(nick, nicktofind)                "401 " + nick + " " + nicktofind + " :No such nick/channel"
-#define ERR_NICKNAMEINUSE(oldnick, nick)                "433 " + oldnick + " " + nick  + " :Nickname is already in use"
+#define ERR_NICKNAMEINUSE(nick)                         "433 " + nick  + " :Nickname is already in use" //"433 " + nick + " :Nickname is already in use" 
+/*
+<nick>: The nickname of the client that is receiving the error. 
+<nickname>: The nickname the client attempted to use.
+*/
 
 //channel
-#define RPL_CREATIONTIME(nickname, channelName, timestamp)          "329 " + nickname + " " + channelName + " " + timestamp
+#define RPL_CREATIONTIME(nickname, channelName, timestamp)          "329 " + nickname + " " + channelName + " " + timestamp 
 #define ERR_NOSUCHCHANNEL(nick, channelname)                        "403 " + nick + " " + channelname + " :No such channel"
 #define ERR_USERNOTINCHANNEL(clientnick, usernickname, channelname) "441 " + nick + " " + usernickname + " " + channelname + " :They aren't on that channel"
 #define ERR_NOTONCHANNEL(clientnick, channelname)                   "442 " + clientnick + " " + channelname + " :They aren't on that channel"
@@ -55,9 +59,9 @@
 
 
 /* Numeric Responses */
-#define RPL_WELCOME(nickname)                             "001 " + nickname + " :Welcome " + nickname + " to the ft_irc network"
-#define RPL_NAMREPLY(nickname, channelname, users)        "353 " + nickname + " @ " + channelname + " :@" + users
-#define RPL_ENDOFNAMES(source, channelname)               "366 " + source + " " + channelname + " :End of /NAMES list."
+#define RPL_WELCOME(nickname, userName)                     "001 " + nickname + " :Welcome to the Internet Relay Network " + nickname //001 <nick> :Welcome to the Internet Relay Network <nick>!<user>@<host>
+#define RPL_NAMREPLY(nickname, channelname, users)          "353 " + nickname + " @ " + channelname + " :@" + users
+#define RPL_ENDOFNAMES(source, channelname)                 "366 " + source + " " + channelname + " :End of /NAMES list."
 
 
 /* Command Responses */
