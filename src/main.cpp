@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include "Server.hpp"
+#include "HandleSignals.hpp"
 
 int printErrorMessage(int errorFlag)
 {
@@ -44,6 +45,7 @@ int checkValidPort(std::string port)
 	return portNo;
 }
 
+
 int main(int argc, char **argv)
 {
 	if (argc != 3)
@@ -51,6 +53,7 @@ int main(int argc, char **argv)
 	int port = checkValidPort(argv[1]);
 	if (!port)
 		return (printErrorMessage(1));
+	HandleSignals();
 	Server server(port, argv[2]);
 	try
 	{
@@ -63,31 +66,3 @@ int main(int argc, char **argv)
 	}
 	return 0;
 }
-
-/*
-
-int	main(int ac, char** av)
-{
-	int	portNo = -1;
-
-	if (ac != 3)
-		return (printErrorMessage(0));
-	std::string	arg1 = av[1];
-	std::string	arg2 = av[2];
-	if (arg1.empty() || arg2.empty())
-		return (printErrorMessage(0));
-	try
-	{
-		portNo = stoi(arg1);
-	}
-	catch (std::invalid_argument &e)
-	{
-		return (printErrorMessage(1));
-	}
-	catch (std::out_of_range &e)
-	{
-		return (printErrorMessage(1));
-	}
-	std::cout << "Welcome to your IRC / Webserv Server!" << std::endl;
-	return (0);
-}*/

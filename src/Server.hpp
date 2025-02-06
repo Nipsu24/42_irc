@@ -18,6 +18,10 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
+#include <signal.h>
+#include <unistd.h>
+#include <cstdlib>
+
 const int BUFFER_SIZE = 1024;
 const int MAX_CLIENTS = 10;
 
@@ -94,6 +98,7 @@ public:
 	bool						clientExists(const std::string& nick);
 	
 private:
+	volatile sig_atomic_t		server_running; // Flag to indicate whether the server should keep running
 	int							_port = 6667; // Example port
 	std::string					_passwd;
 	std::vector<Client *>		_clients;

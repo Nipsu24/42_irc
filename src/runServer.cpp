@@ -135,7 +135,7 @@ void Server::runServer()
     std::vector<struct pollfd> fds;
 
     // Main event loop
-    while (true)
+    while (server_running)
     {
         // Set up the poll structure
         fds.clear();
