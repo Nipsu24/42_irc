@@ -24,17 +24,18 @@ void removeWhitespace(std::string &str) {
 }
 
 /*Checks if conditions for setting topic are met and if this is the case, sets respective
-  topic for channel. First trmis topic message string by any white space, then checks if 
+  topic for channel. First trims topic message string end from by any white space, then checks if 
   channel exists, and in the setTopic function varifies if client is part of the channel
   and if the topic operator only mode is active. Catches respective exceptions thrown by
-  setTopic function.*/
+  setTopic function. Broadcast topic change to all members of the channel*/
 void Server::handleTopic(Client &client, const std::string& channelName, std::string message)
 {
 	std::istringstream iss(message);
 	std::getline(iss, message);
 
 	message.erase(0, message.find_first_not_of(' '));
-	removeWhitespace(message);
+	message.erase(message.find_last_not_of(" \n\r\t")+1);
+	// removeWhitespace(message);
 
 	if (!checkIfChannelExists(channelName))
 	{
@@ -51,5 +52,6 @@ void Server::handleTopic(Client &client, const std::string& channelName, std::st
 		MessageServerToClient(client, ERR_NOTONCHANNEL(client.getNick(), channelName));
 	}
 	std::string response = ":" + client.getNick() + " " + "TOPIC " + channelName + " " + message;
-	MessageServerToClient(client, RPL_TOPIC(client.getNick(), channelName, message));
+	for (Client *member : getChannelByChannelName(channelName)->getUsers())
+		MessageServerToClient(*member, RPL_TOPIC(client.getNick(), channelName, message));
 }
