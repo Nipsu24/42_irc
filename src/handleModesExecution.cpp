@@ -151,5 +151,6 @@ void	Server::executeModes(Client& client, Channel* channel)
 	if (!setParameters.empty())
 	response += " " + setParameters;
 	std::cout << "Message to client: " << response << std::endl;
-	MessageServerToClient(client, response);
+	for (Client *member : channel->getUsers())
+		MessageServerToClient(*member, response);
 }

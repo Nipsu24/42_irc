@@ -20,7 +20,7 @@
 #include "response.hpp"
 
 /*Helper function of checkForValidModes, cheks if all strings of vector are all filled, if parameter for l mode only
-  consists of digits and if parameter for o contains user which is member of the channel*/
+  consists of digits and if parameter for o contains user which is existing at all and if he is member of the channel*/
 bool	Server::checkValidParameter(int index, std::vector<std::string> parameter, char mode, Channel *channel, Client& client)
 {
 	std::string	response;
@@ -29,16 +29,18 @@ bool	Server::checkValidParameter(int index, std::vector<std::string> parameter, 
 		|| parameter[index].empty())
 	{
 		MessageServerToClient(client, ERR_NEEDMOREPARAMS(client.getNick()));
-		// response = "461 " + client.getNick() + " MODE :Not enough parameters";
-		// MessageServerToClient(client, response);
 		return (false);
 	}
 	if (mode == 'l' && !std::all_of(parameter[index].begin(), parameter[index].end(), ::isdigit))
 		return (false);
 	if (mode == 'o') {
-		Client* client = getClientByNickname(parameter[index]);
-		if (!userIsMemberOfChannel(*client, channel->getChannelName())) {
-			MessageServerToClient(*client, ERR_NOTONCHANNEL(client->getNick(), channel->getChannelName()));
+		Client* potentialMember = getClientByNickname(parameter[index]);
+		if (potentialMember == nullptr) {
+			MessageServerToClient(client, ERR_NOTONCHANNEL(parameter[index], channel->getChannelName()));
+			return (false);
+		}
+		else if (!userIsMemberOfChannel(*potentialMember, channel->getChannelName())) {
+			MessageServerToClient(client, ERR_NOTONCHANNEL(parameter[index], channel->getChannelName()));
 			return (false);
 		}
 	}
