@@ -21,7 +21,8 @@
 /*Kicks clients from channels, checks first if channel exists, then uses try / catch to account for potential
   errors such as "no operator", "user not in channel" or "user does not exist". Furthermore, checks if reason
   is empty or only consists of whitespace and ':'. If this is the case, reason is treated as empty and the user's
-  nickname is passed to message function as "reason".*/
+  nickname is passed to message function as "reason". If reaon is not empty, string manipulation is conducted in order
+  to remove any whitespace characters at the end of the string and potential ':' at beginning of string.*/
 void Server::handleKick(Client &client, std::string message)
 {
 	std::istringstream	iss(message);
@@ -44,7 +45,7 @@ void Server::handleKick(Client &client, std::string message)
 	}
 	if (!reason.empty() && !(std::all_of(reason.begin(), reason.end(), [](unsigned char ch) { return std::isspace(ch) || ch == ':'; }))) {
 		reasonExist = true;
-		removeWhitespace(reason);
+		reason.erase(reason.find_last_not_of(" \n\r\t")+1);
 		if (reason[0] == ':')
 			reason.erase(0, 1);
 	}
