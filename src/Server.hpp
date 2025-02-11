@@ -18,6 +18,10 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
+#include <signal.h>
+#include <unistd.h>
+#include <cstdlib>
+
 const int BUFFER_SIZE = 1024;
 const int MAX_CLIENTS = 10;
 
@@ -92,8 +96,9 @@ public:
 
 	bool						checkIfChannelExists(const std::string& channelName);
 	bool						clientExists(const std::string& nick);
-	
+
 private:
+
 	int							_port = 6667; // Example port
 	std::string					_passwd;
 	std::vector<Client *>		_clients;

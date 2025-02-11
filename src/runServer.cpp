@@ -19,6 +19,8 @@
 #include <poll.h>
 #include <system_error>
 
+volatile sig_atomic_t		server_running; // For signal handeling
+
 /*
     * Create a server socket
 */
@@ -126,16 +128,34 @@ void Server::cleanupResources(int server_fd, std::vector<Client *> &_clients)
     close(server_fd);
 }
 
+void handle_sig(int sig) 
+{
+	if(sig == SIGSEGV)
+        std::cerr << "Segmentation fault occurred! Exiting." << std::endl;
+    else if(sig == SIGINT || sig == SIGTERM ||sig == SIGQUIT)
+        std::cout << std::endl << "Shutting down server..." << std::endl;
+    server_running = 0;
+}
+
+void HandleSignals()
+{
+    server_running = 1;
+	signal(SIGINT, handle_sig);   // Handle Ctrl+C
+    signal(SIGTERM, handle_sig); // Handle termination request (kill)
+    signal(SIGQUIT, handle_sig); /* Handle Ctrl + \ */
+    signal(SIGSEGV, handle_sig); // Handle segmentation fault
+}
+
 void Server::runServer()
 {
     // Create and configure server socket
     int server_fd = createServerSocket();
     bindAndListen(server_fd);
+    HandleSignals();
 
     std::vector<struct pollfd> fds;
-
     // Main event loop
-    while (true)
+    while (server_running)
     {
         // Set up the poll structure
         fds.clear();
@@ -150,10 +170,11 @@ void Server::runServer()
         int poll_result = poll(fds.data(), fds.size(), -1);
         if (poll_result == -1)
         {
+            if (errno == EINTR)  // If poll is interrupted by signal.
+                continue;
             perror("Poll failed");
             break;
         }
-
         // Check for events on the server socket (new connection)
         if (fds[0].revents & POLLIN)
         {
@@ -161,7 +182,6 @@ void Server::runServer()
         }
         handleEvents(fds, _clients);
     }
-
     // Clean up and close all resources
     cleanupResources(server_fd, _clients);
 }
