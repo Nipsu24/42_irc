@@ -96,9 +96,9 @@ public:
 
 	bool						checkIfChannelExists(const std::string& channelName);
 	bool						clientExists(const std::string& nick);
-	
+
 private:
-	volatile sig_atomic_t		server_running; // Flag to indicate whether the server should keep running
+
 	int							_port = 6667; // Example port
 	std::string					_passwd;
 	std::vector<Client *>		_clients;

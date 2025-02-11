@@ -13,7 +13,6 @@
 #include <iostream>
 #include <string>
 #include "Server.hpp"
-#include "HandleSignals.hpp"
 
 int printErrorMessage(int errorFlag)
 {
@@ -45,7 +44,6 @@ int checkValidPort(std::string port)
 	return portNo;
 }
 
-
 int main(int argc, char **argv)
 {
 	if (argc != 3)
@@ -53,7 +51,6 @@ int main(int argc, char **argv)
 	int port = checkValidPort(argv[1]);
 	if (!port)
 		return (printErrorMessage(1));
-	HandleSignals();
 	Server server(port, argv[2]);
 	try
 	{
