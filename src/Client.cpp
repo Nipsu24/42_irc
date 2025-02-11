@@ -15,7 +15,7 @@
 Client::Client() {}
 
 Client::Client(int fd, const sockaddr_in &client_addr)
-    : _fd(fd), _addr(client_addr), _nick(""), _userName("") {}
+    : _fd(fd), _addr(client_addr), _nick("*"), _userName("") {}
 
 Client::Client(const Client &other)
 {

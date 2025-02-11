@@ -25,5 +25,4 @@
 void Server::handleUserName(Client &client, std::vector<std::string> tokens, int index)
 {
 	client.setUsername(tokens[index + 1]);
-	MessageServerToClient(client, RPL_WELCOME(client.getNick()));
 }

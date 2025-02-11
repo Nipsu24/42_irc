@@ -18,23 +18,15 @@ void Server::handleNick(Client &client, std::string nick)
 {
 	std::string channelName = "";
 	std::string oldNick = client.getNick();
-	
-	if (client.getState() != REGISTERED)
-	{
-		std::string uniqueNick = nick;
-		while (clientExists(uniqueNick)) {
-			uniqueNick += "_";
-		}
-		client.setNick(uniqueNick);
-	}
+
+	if (clientExists(nick))
+		MessageServerToClient(client, ERR_NICKNAMEINUSE(oldNick, nick));
 	else
 	{
-		if (clientExists(nick))
-			MessageServerToClient(client, ERR_NICKNAMEINUSE(oldNick, nick));
-		else
-		{
-			client.setNick(nick);
-			MessageServerToClient(client, RPL_NICK(oldNick, client.getUsername(), client.getNick()));
-		}
+		client.setNick(nick);
+		MessageServerToClient(client, RPL_NICK(oldNick, client.getUsername(), client.getNick()));
+		if (client .getState() != REGISTERED)
+			MessageServerToClient(client, RPL_WELCOME(client.getNick()));
+		client.setState(REGISTERED);
 	}
 }

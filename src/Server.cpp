@@ -116,9 +116,6 @@ void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, 
 	}
 	else if (tokens[index + 1] == "END")
 	{
-
-		client.setState(REGISTERED);
-		response = ":001 " + client.getNick() + ":Welcome to the Internet Relay Network " + client.getNick();
 		MessageServerToClient(client, response);
 	}
 	else
