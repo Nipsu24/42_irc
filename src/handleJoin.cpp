@@ -49,15 +49,15 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 				if (channelName == availableChannels->getChannelName())
 				{
 					std::string namesList = "";
-					
-					for (Client *clientsIn : availableChannels->getUsers())
-					{
-						namesList.append(clientsIn->getNick() + " ");
-					}
 					if (!availableChannels->checkForModeRestrictions(client, password,
 						[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
 						return ;
 					availableChannels->addClient(&client);
+					for (Client *clientsIn : availableChannels->getUsers())
+					{
+						namesList.append(clientsIn->getNick() + " ");
+					}
+					std::cout << ":" << namesList << "." << std::endl;
 					//for loop to broadcast join message to all clients in the channel
 					for (Client *member : getChannelByChannelName(channelName)->getUsers()) {
 						MessageServerToClient(*member, RPL_JOIN(client.getNick(), channelName));
