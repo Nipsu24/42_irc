@@ -64,11 +64,11 @@ public:
 	void						handlePass(Client &client, std::vector<std::string> tokens, int index);
 	void						handleJoin(Client &client, std::string channelName, std::string password);
 	void						handlePart(Client &client, std::vector<std::string> tokens, int index);
-	void						handlePrivmsg(Client &client, std::string channelName, std::string firstWord, std::string &message);
+	void						handlePrivmsg(Client &client, std::string channelNameOrNick, std::string &message);
 	
 	// void handlePrivmsg(Client &client, std::vector<std::string> tokens, int index, const std::string &message);
 	void						handleNick(Client &client, std::string nick);
-	void						handlePingPong(Client &client);
+	void						handlePingPong(Client &client, std::string rest);
 
 	// channel handles these
 	void						handleKick(Client &client, std::string message);

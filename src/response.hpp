@@ -68,6 +68,6 @@
 #define RPL_KICK(source, channel, target, reason)       ":" + source + " KICK " + channel + " " + target + " :" + reason
 //#define RPL_PART(source, channel)                       ":" + source + " PART :" + channel
 //#define RPL_PING(source, token)                         ":" + source + " PONG :" + token
-//#define RPL_PRIVMSG(source, target, message)            ":" + source + " PRIVMSG " + target + " :" + message
+#define RPL_PRIVMSG(clientnick, nick, message)            ":" + clientnick + " PRIVMSG " + nick + " :" + message
 //#define RPL_NOTICE(source, target, message)             ":" + source + " NOTICE " + target + " :" + message
 //#define RPL_QUIT(source, message)                       ":" + source + " QUIT :Quit: " + message

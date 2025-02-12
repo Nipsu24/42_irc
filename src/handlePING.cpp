@@ -20,9 +20,9 @@
 
 
 
-void Server::handlePingPong(Client &client)
+void Server::handlePingPong(Client &client, std::string rest)
 {
-	std::string response = ":localhost PONG localhost :localhost";
+	std::string response = "PONG " + rest;
 	MessageServerToClient(client, response);
 	int i = 0;
 	for (Channel *channel : _channels)
@@ -32,6 +32,7 @@ void Server::handlePingPong(Client &client)
 		
 		
 	}
+	
 	std::cout << "number of clients: " << getClients().size() << std::endl;
 
 	for (Client *client : _clients)
