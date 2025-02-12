@@ -71,7 +71,7 @@ void Server::bindAndListen(int server_fd)
 /*
     * Handle a new client connection
 */
-void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
+void Server::handleNewClient(int server_fd)
 {
     
     sockaddr_in client_addr = {};
@@ -90,7 +90,7 @@ void Server::handleNewClient(int server_fd, std::vector<Client *> &_clients)
 /*
     * Handle events on the server socket and client sockets
 */
-void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *> &_clients)
+void Server::handleEvents(std::vector<struct pollfd> &fds)
 {
     for (size_t i = 1; i < fds.size(); ++i)
     {
@@ -118,13 +118,19 @@ void Server::handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *>
     }
 }
 
-void Server::cleanupResources(int server_fd, std::vector<Client *> &_clients)
+void Server::cleanupResources(int server_fd)
 {
     for (auto &client : _clients)
     {
         close(client->getFd());
         delete client; // Don't forget to delete the Client object if you're using raw pointers
     }
+    _clients.clear();
+    for (auto &channel : _channels)
+    {
+        delete channel; // Don't forget to delete the Client object if you're using raw pointers
+    }
+    _channels.clear(); 
     close(server_fd);
 }
 
@@ -178,10 +184,10 @@ void Server::runServer()
         // Check for events on the server socket (new connection)
         if (fds[0].revents & POLLIN)
         {
-            handleNewClient(server_fd, _clients);
+            handleNewClient(server_fd);
         }
-        handleEvents(fds, _clients);
+        handleEvents(fds);
     }
     // Clean up and close all resources
-    cleanupResources(server_fd, _clients);
+    cleanupResources(server_fd);
 }

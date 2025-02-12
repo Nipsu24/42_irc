@@ -42,12 +42,7 @@ Server& Server::operator=(const Server& other) {
 
 /*Destructor frees dynamically allocated channels. Uses '.clear'
   at the end to avoid dangling pointers.*/
-Server::~Server() {
-	for (Channel* channel : _channels) {
-		delete channel;
-	}
-	_channels.clear();
-}
+Server::~Server() {}
 
 void Server::setPort(int value) {
 	_port = value;
