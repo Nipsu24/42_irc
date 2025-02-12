@@ -57,6 +57,7 @@ void Server::handleInvite(Client &client, std::string message)
 	}
 	//everything ok, lets invite
 	MessageServerToClient(*clientToInvite, RPL_INVITING(client.getNick(), nick, channelName));
+	getChannelByChannelName(channelName)->addToInvitationList(clientToInvite);
 }
 
 

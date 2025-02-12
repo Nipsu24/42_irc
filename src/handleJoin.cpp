@@ -23,15 +23,10 @@
   adds client to the channel (if no channel restrictions apply). Otherwise creates pointer to a 
   new channel via 'new' (to ensure that class will exist further on and not go out of scope when 
   function terminates). Respective memory is freed again in destructor of server channel*/
-
-/*ADDs now user to several channels in if /join #cahnnel1,channel2.   Password still needs to be done*/
 void	Server::handleJoin(Client &client, std::string channels, std::string password)
 {
 	if (channels == "")
-	{
 		MessageServerToClient(client, "\r\n");
-		return;
-	}
 	else
 	{
 		std::stringstream ss(channels);
@@ -65,7 +60,7 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 						MessageServerToClient(*member, RPL_ENDOFNAMES(client.getNick(), channelName));
 					}
 					channelExists = true;
-					break;
+					return;//break;
 				} 
 			}
 			if (channelExists == false)
@@ -80,6 +75,7 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 				MessageServerToClient(client, RPL_JOIN(client.getNick(), channelName));
 				MessageServerToClient(client, RPL_NAMREPLY(client.getNick(), channelName, client.getNick()));
 				MessageServerToClient(client, RPL_ENDOFNAMES(client.getNick(), channelName));
+				return ;
 			}
 		}
 		
