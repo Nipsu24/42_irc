@@ -43,11 +43,11 @@ public:
 	void						removeClient(int fd);
 
 	// runServer.cpp
-	void						handleEvents(std::vector<struct pollfd> &fds, std::vector<Client *> &_clients);
+	void						handleEvents(std::vector<struct pollfd> &fds);
 	int							createServerSocket();
 	void						bindAndListen(int server_fd);
-	void						handleNewClient(int server_fd, std::vector<Client *> &_clients);
-	void						cleanupResources(int server_fd, std::vector<Client *> &_clients);
+	void						handleNewClient(int server_fd);
+	void						cleanupResources(int server_fd);
 	void						sendTestMessage(int client_fd);
 
 	// messageHandler.cpp
