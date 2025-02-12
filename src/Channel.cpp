@@ -271,9 +271,9 @@ bool	Channel::checkForModeRestrictions(Client &client, std::string password, std
 			return (false);
 		}
 	}
-	if (_inviteOnlyEnabled) {
-		messageFunc(client, ERR_INVITEONLYCHAN(client.getNick(), _channelName));
-		return (false);
+	if (_inviteOnlyEnabled && !isOnInvitationList(&client)) {
+			messageFunc(client, ERR_INVITEONLYCHAN(client.getNick(), _channelName));
+			return (false);
 	}
 	return (true);
 }
@@ -286,3 +286,21 @@ bool	Channel::isChannelOperator(Client* client) {
 	else
 		return (false);
 }
+
+/*Checks if client is on invitation list*/
+bool	Channel::isOnInvitationList(Client* client) {
+	auto it = std::find(_invitationList.begin(), _invitationList.end(), client);
+	if (it != _invitationList.end())
+		return (true);
+	else
+		return (false);
+}
+
+/*Checks first if user is already on the invitation list and if not the case, adds him to the list.*/
+void	Channel::addToInvitationList(Client* client) {
+	auto it = std::find(_invitationList.begin(), _invitationList.end(), client);
+	if (it == _invitationList.end())
+		_invitationList.push_back(client);
+}
+
+std::vector<Client *>& Channel::getInvitationList() { return(_invitationList); }

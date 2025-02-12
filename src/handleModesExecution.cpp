@@ -112,6 +112,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 						if (channel->getInviteOnlyState()) {
 							channel->setInviteOnlyState(false);
 							setModes += "-i";
+							channel->getInvitationList().clear();
 						}
 						break;
 					case 'k':

@@ -62,6 +62,9 @@ public:
 	bool						checkForModeRestrictions(Client &client, std::string password,
 										std::function<void(Client&, const std::string&)> messageFunc);
 	bool						isChannelOperator(Client* client);
+	bool						isOnInvitationList(Client* client); 
+	void						addToInvitationList(Client* client);
+	std::vector<Client *>&		getInvitationList();
 	
 
 		class ClientNotOperatorException : public std::exception
@@ -103,6 +106,7 @@ private:
 	std::string					_timestampOfCreation;
 	std::string					_parsedModes;
 	std::vector<std::string>	_parsedParameters;
+	std::vector<Client*>		_invitationList;
 };
 
 //user limit;
