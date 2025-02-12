@@ -10,48 +10,40 @@
 /*                                                                                          */
 /* **************************************************************************************** */
 
+
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "response.hpp"
 #include <iostream>
 
-bool isMessagePrivate(const std::string &message)
-{
-    if(message[0] == ':' && message[message.length()-1] == ':')
-        return true;
-    else
-        return false;
-}
-
-void Server::handlePrivmsg(Client &client, const std::string channelName, std::string firstWord, std::string &message)
+void Server::handlePrivmsg(Client &client, const std::string channelNameOrNick,  std::string &message)
 {    
-    removeWhitespace(message);
-	std::string response = ":" + client.getNick() + " PRIVMSG " + channelName+ " " + firstWord  + message;
-    if(isMessagePrivate(firstWord)) // Check if the message is private, and try to send it
+    message.erase(0, message.find_first_not_of(' '));
+	message.erase(message.find_last_not_of(" \n\r\t")+1);
+    if (channelNameOrNick[0] == '#')            //message to whole channel
     {
-        std::cout << "Trying send private message: "<< response << std::endl;
-        std::string nick = firstWord.substr(1, firstWord.length()-2);
-        for (Client *_client : _clients)
+        for (Channel *channel : _channels)
         {
-            if (_client->getNick() == nick)
+            if (channel->getChannelName() == channelNameOrNick)
             {
-                MessageServerToClient(*_client, response);
-                return; // If client is found, return
+                for (Client *_client : channel->getUsers())
+                {
+                    if (_client != &client)
+                    {
+                        MessageServerToClient(*_client, RPL_PRIVMSG(client.getNick(), channelNameOrNick, message));                    
+                    }
+                }            
             }
         }
     }
-    std::cout << "Public message: " << response << std::endl;
-    for (Channel *channel : _channels)
-    {
-        if (channel->getChannelName() == channelName)
+    else
+    {   //private message
+        for (Client *_client : _clients)
         {
-            for (Client *_client : channel->getUsers())
+            if (_client->getNick() == channelNameOrNick)
             {
-                if (_client != &client)
-                {
-                    MessageServerToClient(*_client, response);                    
-                }
-            }            
-        }
+                MessageServerToClient(*_client, RPL_PRIVMSG(client.getNick(), _client->getNick(), message));                    
+            }
+        }  
     }
-    
 }

@@ -90,7 +90,9 @@ void Server::handleClientMessage(Client &client, const std::string &message)
 
 		if (command == "PING")
         {
-            handlePingPong(client);
+            std::string rest;
+            std::getline(iss, rest);
+            handlePingPong(client, rest);
         }
         else if (command == "JOIN")
         {
@@ -101,13 +103,11 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         }
         else if (command == "PRIVMSG")
         {
-            std::string channelName;
+            std::string channelNameOrNick;
             std::string rest;
-            std::string firstWord;
-            iss >> channelName;
-            iss >> firstWord;
+            iss >> channelNameOrNick;
             std::getline(iss, rest);
-            handlePrivmsg(client, channelName, firstWord, rest);
+            handlePrivmsg(client, channelNameOrNick, rest);
         }
         else if (command == "NICK")
         {
