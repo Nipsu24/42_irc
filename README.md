@@ -20,6 +20,18 @@ The repository contains a custom made `Internet Relay Chat server (IRC)` to whic
 - Timo Saari (https://github.com/LandSurroundedByWater)  
 - Matti Rinkinen (https://github.com/MRinkinen)
 
+
+Worksplit:
+- Client-Server Communication MVP (Matti)
+- Join (all)
+- Signals (Matti, Timo)
+- Private messages (Matti, Timo)
+- Invite (Timo)
+- Channels & Modes (Marius)
+- Kick (Timo, Marius)
+- Topic (Timo, Marius)
+- Testing, bugfixing (all)
+
 ## Program
 The server utelises C++ socket programming in order to create a TCP socket which operates over IP4. The server binds to the socket and furhter listens to incoming connection requests of clients. 
 The following user commands are handled from the server:
