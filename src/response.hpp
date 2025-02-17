@@ -35,7 +35,7 @@
 //#define ERR_NOTONCHANNEL(source, channel)               "442 " + source + " " + channel + " :You're not on that channel"
 //#define ERR_NOTREGISTERED(source)                       "451 " + source + " :You have not registered"
 //#define ERR_ALREADYREGISTERED(source)                   "462 " + source + " :You may not register"
-//#define ERR_PASSWDMISMATCH(source)                      "464 " + source + " :Password is incorrect"
+#define ERR_PASSWDMISMATCH(source)                      "464 " + source + " :Password is incorrect"
 //#define ERR_NONICKNAMEGIVEN(source)                     "431 " + source + " :Nickname not given"
 
 
@@ -56,6 +56,8 @@
 
 /* Numeric Responses */
 #define RPL_WELCOME(nickname)                             "001 " + nickname + " :Welcome " + nickname + " to the ft_irc network"
+#define RPL_PASSWDOK()                                    "NOTICE * Password is perfecto!"
+#define RPL_PASSWDREQUEST()                               "NOTICE * :This server requires a password. Please send: PASS <password>"
 #define RPL_NAMREPLY(nickname, channelname, users)        "353 " + nickname + " @ " + channelname + " :@" + users
 #define RPL_ENDOFNAMES(source, channelname)               "366 " + source + " " + channelname + " :End of /NAMES list."
 

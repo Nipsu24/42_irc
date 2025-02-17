@@ -58,10 +58,10 @@ public:
 
 	// handleCommands.cpp
 	void						handleCAPs(Client &client, const std::vector<std::string>& tokens, int index);
+	void						handlePass(Client &client, const std::vector<std::string>& tokens, int index);
 	//void						handleCapReq(Client &client, std::vector<std::string> tokens, int index);
 	void						handleUserName(Client &client, std::vector<std::string> tokens, int index);
 
-	void						handlePass(Client &client, std::vector<std::string> tokens, int index);
 	void						handleJoin(Client &client, std::string channelName, std::string password);
 	void						handlePart(Client &client, std::vector<std::string> tokens, int index);
 	void						handlePrivmsg(Client &client, std::string channelNameOrNick, std::string &message);
