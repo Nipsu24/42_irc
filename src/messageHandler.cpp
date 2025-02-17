@@ -70,6 +70,8 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
             if (token == "CAP")
                 handleCAPs(client, tokens, i);
+            if (token == "PASS")
+                handlePass(client, tokens, i);
             if (token == "USER")
                 handleUserName(client, tokens, i);
             if (token == "NICK")

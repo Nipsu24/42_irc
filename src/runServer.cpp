@@ -182,7 +182,7 @@ void Server::runServer()
             break;
         }
         // Check for events on the server socket (new connection)
-        if (fds[0].revents & POLLIN)
+        if (fds[0].revents & POLLIN )
         {
             handleNewClient(server_fd);
         }

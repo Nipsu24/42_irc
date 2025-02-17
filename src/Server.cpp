@@ -11,6 +11,7 @@
 /* **************************************************************************************** */
 
 #include "Server.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <cstring>
 #include <vector>
@@ -18,7 +19,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include <system_error>
-#include "Server.hpp"
+
 
 Server::Server() {}
 
@@ -101,8 +102,9 @@ void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, 
 	{
 		client.setState(REGISTERING);
 		std::cout << "Received CAP LS from client" << client.getFd() << ": " << client.getNick() << std::endl; // Debugging
-		response = "CAP * LS";
+		response = "CAP * LS :multi-prefix sasl";
 		MessageServerToClient(client, response);
+		MessageServerToClient(client, RPL_PASSWDREQUEST());
 	}
 	else if (tokens[index + 1] == "REQ")
 	{
