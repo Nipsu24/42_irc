@@ -11,6 +11,7 @@
 /* **************************************************************************************** */
 
 #include "Server.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -20,23 +21,6 @@
 #include <regex>
 #include <vector>
 
-/*void Server::sendToChannelClients(Client* client, std::string message, std::string channelName)
-{
-
-    for (Channel *channel : _channels)
-    {
-        std::cout << channel->getChannelName() << std::endl;
-        if (channel->getChannelName() == channelName)
-        {
-            for (Client *_client : channel->getUsers())
-            {
-                if (&_client != &client)
-                    MessageServerToClient(*_client, message);
-            }
-        }
-    }
-
-}*/
 
 /*
  * Handle events on the server
@@ -55,10 +39,10 @@ void Server::MessageServerToClient(Client client, const std::string &message)
  */
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
-    
-    if (client.getState() != REGISTERED)
+    if (client.getState() == NOTREGISTERED)
     {
         std::vector<std::string> tokens = SplitString(message);
+        
         if (tokens.size() < 1)
         {
             std::cerr << "Invalid message" << std::endl;
@@ -67,11 +51,37 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         int i = 0;
         for (auto &token : tokens)
         {
-            std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
+            std::cout << "try: " << token << std::endl;
             if (token == "CAP")
+            {
                 handleCAPs(client, tokens, i);
-            if (token == "PASS")
+                break;
+            }
+            else if (token == "PASS")
+            {
+                std::cout << "pass here: " + token << std::endl;
                 handlePass(client, tokens, i);
+                break;
+            }
+            else if (token == "USER" || token == "NICK")
+            {
+                std::cout << "here: " + token << std::endl;
+                MessageServerToClient(client, RPL_PASSWDREQUEST());
+                MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
+                removeClient(client.getFd());
+                close(client.getFd());
+            }
+        }
+    }
+    else if (client.getState() == REGISTERING)
+    {
+        
+        std::vector<std::string> tokens = SplitString(message);
+        int i = 0;
+        for (auto &token : tokens)
+        {
+            std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
+            
             if (token == "USER")
                 handleUserName(client, tokens, i);
             if (token == "NICK")
@@ -82,7 +92,7 @@ void Server::handleClientMessage(Client &client, const std::string &message)
             i++;
         }
     }
-    else
+    else if (client.getState() == REGISTERED)
     {
         std::string command;
 		std::string	password;

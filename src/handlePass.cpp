@@ -22,17 +22,20 @@
 
 void Server::handlePass(Client &client, const std::vector<std::string>& tokens, int index)
 {
+	std::cout << "paswwd = " + tokens[index + 1] << std::endl;
 	std::string response;
 	if (tokens[index + 1] == _passwd)
 	{
 		MessageServerToClient(client, RPL_PASSWDOK());
+		std::cout << "Password ok and ready to register" << std::endl;
+		client.setState(REGISTERING);
 	}
 	else
 	{
+		std::cout << "not good pass" << std::endl;
 		MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
+		removeClient(client.getFd());
 		close(client.getFd());
-		_clients.erase(std::remove_if(_clients.begin(), _clients.end(),
-		[&](Client* c) { return c->getFd() == client.getFd(); }), _clients.end());
 	}
 		
 }

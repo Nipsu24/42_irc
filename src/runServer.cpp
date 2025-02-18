@@ -84,8 +84,8 @@ void Server::handleNewClient(int server_fd)
     }
     std::cout << "New client connected." << std::endl;
     _clients.push_back(new Client(client_fd, client_addr));
-    _clients.back()->setState(REGISTERING);
-}
+    std::cout << "clientState:" << _clients.back()->getState() << std::endl; 
+ }
 
 /*
     * Handle events on the server socket and client sockets

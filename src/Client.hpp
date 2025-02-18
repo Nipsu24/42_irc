@@ -18,6 +18,7 @@
 
 enum clientState
 {
+    NOTREGISTERED,
     REGISTERING,
     REGISTERED,
     DISCONNECTED

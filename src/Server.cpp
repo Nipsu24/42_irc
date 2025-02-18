@@ -100,11 +100,9 @@ void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, 
 	std::string response;
 	if (tokens[index + 1] == "LS")
 	{
-		client.setState(REGISTERING);
 		std::cout << "Received CAP LS from client" << client.getFd() << ": " << client.getNick() << std::endl; // Debugging
 		response = "CAP * LS :multi-prefix sasl";
 		MessageServerToClient(client, response);
-		MessageServerToClient(client, RPL_PASSWDREQUEST());
 	}
 	else if (tokens[index + 1] == "REQ")
 	{
