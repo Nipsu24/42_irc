@@ -15,7 +15,7 @@
 Client::Client() {}
 
 Client::Client(int fd, const sockaddr_in &client_addr)
-    : _fd(fd), _addr(client_addr), _nick("*"), _userName("") {}
+    : _fd(fd), _addr(client_addr), _nick("*"), _userName("") , _passwdOK(false){}
 
 Client::Client(const Client &other)
 {
@@ -76,6 +76,16 @@ void Client::setState(clientState state)
 clientState Client::getState() const
 {
     return static_cast<clientState>(_state);
+}
+
+bool Client::getPasswdOK()
+{
+    return _passwdOK;
+}
+
+void Client::setPasswdOK(bool ok)
+{
+    _passwdOK = ok;
 }
 
 

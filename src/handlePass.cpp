@@ -26,6 +26,7 @@ void Server::handlePass(Client &client, const std::vector<std::string>& tokens, 
 	if (tokens[index + 1] == _passwd)
 	{
 		MessageServerToClient(client, RPL_PASSWDOK());
+		client.setPasswdOK(true);
 	}
 	else
 	{

@@ -20,23 +20,6 @@
 #include <regex>
 #include <vector>
 
-/*void Server::sendToChannelClients(Client* client, std::string message, std::string channelName)
-{
-
-    for (Channel *channel : _channels)
-    {
-        std::cout << channel->getChannelName() << std::endl;
-        if (channel->getChannelName() == channelName)
-        {
-            for (Client *_client : channel->getUsers())
-            {
-                if (&_client != &client)
-                    MessageServerToClient(*_client, message);
-            }
-        }
-    }
-
-}*/
 
 /*
  * Handle events on the server
@@ -56,7 +39,7 @@ void Server::MessageServerToClient(Client client, const std::string &message)
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
     
-    if (client.getState() != REGISTERED)
+    if (client.getState() == REGISTERING)
     {
         std::vector<std::string> tokens = SplitString(message);
         if (tokens.size() < 1)
