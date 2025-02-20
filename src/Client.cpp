@@ -12,80 +12,70 @@
 
 #include "Client.hpp"
 
+/* ************************************************Constructor Section START*************************************** */
 Client::Client() {}
 
 Client::Client(int fd, const sockaddr_in &client_addr)
-    : _fd(fd), _addr(client_addr), _nick("*"), _userName("") , _passwdOK(false){}
+    : _fd(fd), _addr(client_addr), _nick("*"), _userName(""), _passwdOK(false), _nickOK(false), _userNameOK(false) {}
 
 Client::Client(const Client &other)
 {
     this->_fd = other._fd;
+	this->_state = other._state;
+	this->_addr = other._addr;
+	this->_nick = other._nick;
+	this->_userName = other._userName;
+	this->_passwdOK = other._passwdOK;
+	this->_nickOK = other._nickOK;
+	this->_userNameOK = other._userNameOK; 
 }
 
 Client &Client::operator=(const Client &other)
 {
-    if (this != &other)
-    { // Self-assignment check
-        this->_fd = other._fd;
-    }
-    return *this;
+	if (this != &other)
+	{
+		this->_fd = other._fd;
+		this->_state = other._state;
+		this->_addr = other._addr;
+		this->_nick = other._nick;
+		this->_userName = other._userName;
+		this->_passwdOK = other._passwdOK;
+		this->_nickOK = other._nickOK;
+		this->_userNameOK = other._userNameOK; 
+	}
+	return *this;
 }
 
 Client::~Client() {}
 
-void Client::setFd(int value)
-{
-    _fd = value;
-}
+/* ************************************************Constructor Section END*************************************** */
 
-int Client::getFd() const
-{
-    return _fd;
-}
+void Client::setFd(int value) { _fd = value; }
 
-sockaddr_in Client::getAddr() const
-{
-    return _addr;
-}
+int Client::getFd() const { return (_fd); }
 
-void Client::setNick(const std::string &value)
-{
-    _nick = value;
-}
+sockaddr_in Client::getAddr() const { return (_addr); }
 
-std::string Client::getNick() const
-{
-    return _nick;
-}
+void Client::setNick(const std::string &value) { _nick = value; }
 
-void Client::setUsername(const std::string &value)
-{
-    _userName = value;
-}
+std::string Client::getNick() const { return (_nick); }
 
-std::string Client::getUsername() const
-{
-    return _userName;
-}
+void Client::setUsername(const std::string &value) { _userName = value; }
 
-void Client::setState(clientState state)
-{
-    _state = state;
-}
+std::string Client::getUsername() const { return (_userName); }
 
-clientState Client::getState() const
-{
-    return static_cast<clientState>(_state);
-}
+void Client::setState(clientState state) { _state = state; }
 
-bool Client::getPasswdOK()
-{
-    return _passwdOK;
-}
+clientState Client::getState() const { return (static_cast<clientState>(_state)); }
 
-void Client::setPasswdOK(bool ok)
-{
-    _passwdOK = ok;
-}
+bool Client::getPasswdOK() { return (_passwdOK); }
 
+void Client::setPasswdOK(bool ok) { _passwdOK = ok; }
 
+bool Client::getNickOK() { return (_nickOK); }
+
+void Client::setNickOK(bool ok) { _nickOK = ok; }
+
+bool Client::getUserNameOK() { return (_userNameOK); }
+
+void Client::setUserNameOK(bool ok) { _userNameOK = ok; }

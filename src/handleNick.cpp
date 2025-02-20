@@ -57,6 +57,6 @@ void Server::handleNick(Client &client, std::string nick)
 			}
 		}
 		MessageServerToClient(client, RPL_NICK(oldNick, client.getUsername(), client.getNick()));
-		
+		client.setNickOK(true);
 	}
 }

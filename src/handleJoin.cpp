@@ -20,9 +20,9 @@
 
 /*Adds user(client) to a channel or creates new channel in case channel is not yet existing.
   First checks if channel name already exists in vector array of _channels. If this is the case,
-  adds client to the channel (if no channel restrictions apply). Otherwise creates pointer to a 
-  new channel via 'new' (to ensure that class will exist further on and not go out of scope when 
-  function terminates). Respective memory is freed again in destructor of server channel*/
+  adds client to the channel (if no channel restrictions apply) and sends message about new member
+  to all members in channel. Otherwise creates pointer to a new channel via 'new' (to ensure that
+  class will exist further on and not go out of scope when function terminates).*/
 void	Server::handleJoin(Client &client, std::string channels, std::string password)
 {
 	if (channels == "")
@@ -34,38 +34,27 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 
 		while (std::getline(ss, channelName, ',')) 
 		{
-			std::cout << "channel; " << channelName << std::endl;
-
 			std::string namesList = "";
-			std::cout << "Received JOIN from client" << client.getFd() << ": " << client.getNick() << std::endl;
 			bool channelExists = false;
-			for (Channel *availableChannels : _channels)
-			{
-				if (channelName == availableChannels->getChannelName())
-				{
+			for (Channel *availableChannels : _channels) {
+				if (channelName == availableChannels->getChannelName()) {
 					std::string namesList = "";
 					if (!availableChannels->checkForModeRestrictions(client, password,
 						[&](Client &client, const std::string &response) { MessageServerToClient(client, response); }))
 						return ;
 					availableChannels->addClient(&client);
 					for (Client *clientsIn : availableChannels->getUsers())
-					{
 						namesList.append(clientsIn->getNick() + " ");
-					}
-					std::cout << ":" << namesList << "." << std::endl;
-					//for loop to broadcast join message to all clients in the channel
 					for (Client *member : getChannelByChannelName(channelName)->getUsers()) {
 						MessageServerToClient(*member, RPL_JOIN(client.getNick(), channelName));
 						MessageServerToClient(*member, RPL_NAMREPLY(client.getNick(), channelName, namesList));
 						MessageServerToClient(*member, RPL_ENDOFNAMES(client.getNick(), channelName));
 					}
 					channelExists = true;
-					return;//break;
+					return;
 				} 
 			}
-			if (channelExists == false)
-			{
-				
+			if (channelExists == false) {
 				Channel *newChannel = new Channel(channelName);
 				newChannel->setTimestamp();
 				newChannel->addClient(&client);
@@ -81,6 +70,3 @@ void	Server::handleJoin(Client &client, std::string channels, std::string passwo
 		
 	}
 }
-
-//>> :zirconium.libera.chat 353 timo_ @ #testi222 :@timo_   
-//:zirconium.libera.chat 366 timo_ #testi222 :End of /NAMES list.

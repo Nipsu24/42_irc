@@ -12,12 +12,10 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-
 
 struct Parse
 {
@@ -31,41 +29,25 @@ struct Parse
 };
 
 Parse parseMessage(const std::string& input) {
+	Parse				newRequest;
+	std::istringstream	iss(input);
+	std::string			temp;
 
-	Parse newRequest;
-	std::istringstream iss(input);
-	std::string temp;
-
-	// Extract command
 	iss >> newRequest.command;
-
-	// Extract channel namejoinChannel(client, currentRequest.channelName);
 	if (iss >> temp) {
-		if (!temp.empty() && temp[0] == '#') {
+		if (!temp.empty() && temp[0] == '#')
 			newRequest.channelName = temp;
-		} else {
+		else
 			newRequest.message = temp;
-		}
 	}
-
 	std::string remainingMessage;
 	std::getline(iss, remainingMessage);
-
 	if (!remainingMessage.empty()) {
-
-		if (remainingMessage[0] == ' ') {
+		if (remainingMessage[0] == ' ')
 			remainingMessage = remainingMessage.substr(1);
-		}
-
-		if (!newRequest.message.empty()) {
+		if (!newRequest.message.empty())
 			newRequest.message += " ";
-		}
 		newRequest.message += remainingMessage;
 	}
-
-	// Output the results
-
-	return newRequest;
+	return (newRequest);
 }
-
-

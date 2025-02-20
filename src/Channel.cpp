@@ -28,13 +28,20 @@ Channel::Channel(std::string name)
 Channel::Channel(const Channel &other)
 {
 	this->_channelName = other._channelName;
+	this->_channelPassw = other._channelPassw;
+	this->_userLimit = other._userLimit;
+	this->_topicOperatorsOnly = other._topicOperatorsOnly;
+	this->_inviteOnlyEnabled = other._inviteOnlyEnabled;
 }
 
 Channel &Channel::operator=(const Channel &other)
 {
 	if (this != &other)
-	{ // Self-assignment check
-		this->_channelName = other._channelName;
+	{ 	this->_channelName = other._channelName;
+		this->_channelPassw = other._channelPassw;
+		this->_userLimit = other._userLimit;
+		this->_topicOperatorsOnly = other._topicOperatorsOnly;
+		this->_inviteOnlyEnabled = other._inviteOnlyEnabled;
 	}
 	return *this;
 }
@@ -57,6 +64,7 @@ std::string Channel::getChannelPassw() const
 	return (_channelPassw);
 }
 
+/*Checks if passed client is operator of the channel*/
 bool Channel::isClientOperator(Client* client) {
     for (Client* user : _chOperatorList) {
         if (user == client) {
@@ -66,6 +74,7 @@ bool Channel::isClientOperator(Client* client) {
     return false;
 }
 
+/*Checks if passed client is member of channel*/
 bool Channel::isClientInChannel(Client* client) {
     for (Client* user : _userList) {
         if (user == client) {
@@ -110,6 +119,8 @@ std::string	Channel::getMode() const
 	return (activeModes);
 }
 
+/*Let the user if having operator rights (or if set topic is enabled for all members)
+  set the topic of a channel.*/
 void Channel::setTopic(Client *client, const std::string& topic)
 {
 	if (!isClientInChannel(client))
@@ -120,8 +131,9 @@ void Channel::setTopic(Client *client, const std::string& topic)
 		_topic = topic;
 	}
 }
-
-
+/*First checks if the client conducting the kick command is in channel and has operator rights. Then
+  loops through member list of channel in order to find the matching nick of the user to be kicked out.
+  If a match is found, calls removeClient method to kick the user otherwise throws exception.*/
 void Channel::setKick(Client *client, const std::string& channelName, std::string& nick)
 {
 	if (!isClientInChannel(client))
@@ -129,12 +141,11 @@ void Channel::setKick(Client *client, const std::string& channelName, std::strin
 	if (!isClientOperator(client))
 		throw ClientNotOperatorException();
 	auto it = std::find_if(_userList.begin(), _userList.end(), [&](Client* client) {
-        return client->getNick() == nick;
-    });
-    // If the client is found, remove it using removeClient
-    if (it != _userList.end()) {
-        removeClient(*it); // Call removeClient with the found client pointer
-    }
+		return client->getNick() == nick;
+	});
+	if (it != _userList.end()) {
+		removeClient(*it);
+	}
 	else {
 		throw NickNotExistException();
 	}
@@ -158,11 +169,9 @@ std::vector<Client *> &Channel::getUsers() { return (_userList); }
 
 /*Adds new client to the channel by adding it to the vector array of clients.
   Used in joinChannel function in server.cpp*/
-void	Channel::addClient(Client *client)
-{
-	_userList.push_back(client);
-}
+void	Channel::addClient(Client *client) {_userList.push_back(client);}
 
+/*Removes client from channel*/
 void Channel::removeClient(Client *client)
 {
 	auto it = std::find(_userList.begin(), _userList.end(), client);
@@ -173,7 +182,7 @@ void Channel::removeClient(Client *client)
 }
 
 /*Retrieves timestamp of channel creation.*/
-std::string	Channel::getTimestamp() {return (_timestampOfCreation);}
+std::string	Channel::getTimestamp() { return (_timestampOfCreation);}
 
 /*Calculates current time since epoch in seconds and sets respective value to member variable by
   converting value of timestamp into string.*/
@@ -227,23 +236,23 @@ void	Channel::unsetChOperator(Client* client) {
 }
 
 const char* Channel::ClientNotOperatorException::what() const noexcept {
-    return "Client is not an operator in this channel";
+	return ("Client is not an operator in this channel");
 }
 
 const char* Channel::NickNotExistException::what() const noexcept {
-    return "Nick does not exist in this channel";
+	return ("Nick does not exist in this channel");
 }
 
 const char* Channel::ChannelNotFoundException::what() const noexcept {
-    return "Channel not found";
+	return ("Channel not found");
 }
 
 const char* Channel::ClientNotInChannelException::what() const noexcept {
-    return "Client is not in this channel";
+	return ("Client is not in this channel");
 }
 
 const char* Channel::ClientAlreadyInChannelException::what() const noexcept {
-    return "Client already in this channel";
+	return ("Client already in this channel");
 }
 
 /*Returns amount of users within a channel.*/
@@ -303,4 +312,5 @@ void	Channel::addToInvitationList(Client* client) {
 		_invitationList.push_back(client);
 }
 
+/*Returns list of users invited to a channel.*/
 std::vector<Client *>& Channel::getInvitationList() { return(_invitationList); }
