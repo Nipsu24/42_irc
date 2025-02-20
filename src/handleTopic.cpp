@@ -18,11 +18,6 @@
 #include <sstream>
 #include <algorithm>
 
-/*Needed to clear out any whitespace from topic message string*/
-void removeWhitespace(std::string &str) {
-    str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
-}
-
 /*Checks if conditions for setting topic are met and if this is the case, sets respective
   topic for channel. First trims topic message string end from by any white space, then checks if 
   channel exists, and in the setTopic function varifies if client is part of the channel
@@ -35,8 +30,7 @@ void Server::handleTopic(Client &client, const std::string& channelName, std::st
 
 	message.erase(0, message.find_first_not_of(' '));
 	message.erase(message.find_last_not_of(" \n\r\t")+1);
-	// removeWhitespace(message);
-
+	
 	if (!checkIfChannelExists(channelName))
 	{
 		MessageServerToClient(client, ERR_NOSUCHCHANNEL(client.getNick(), channelName));

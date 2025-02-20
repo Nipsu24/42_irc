@@ -20,13 +20,13 @@
 #include <regex>
 #include <vector>
 
-
 /*
  * Handle events on the server
  */
 void Server::MessageServerToClient(Client client, const std::string &message)
 {
-    std::string formattedMessage = message + "\r\n"; // IRC message format
+    std::cout << ">> " << message;
+    std::string formattedMessage = message + "\r\n";
     if (send(client.getFd(), formattedMessage.c_str(), formattedMessage.size(), 0) == -1)
     {
         perror("Error sending message to client");
@@ -34,11 +34,11 @@ void Server::MessageServerToClient(Client client, const std::string &message)
 }
 
 /*
- * Handle messages from the client
- */
+    Handle messages from the client
+*/
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
-    
+    std::cout << "<< " << message;
     if (client.getState() == REGISTERING)
     {
         std::vector<std::string> tokens = SplitString(message);
@@ -50,7 +50,6 @@ void Server::handleClientMessage(Client &client, const std::string &message)
         int i = 0;
         for (auto &token : tokens)
         {
-            std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
             if (token == "CAP")
                 handleCAPs(client, tokens, i);
             if (token == "PASS")
@@ -67,70 +66,58 @@ void Server::handleClientMessage(Client &client, const std::string &message)
     }
     else
     {
-        std::string command;
-		std::string	password;
-		std::cout << "RAW MESSAGE: " << message << std::endl;
+        std::string args[3];
         std::istringstream iss(message);
-        iss >> command;
+        iss >> args[0];
 
-		if (command == "PING")
+		if (args[0] == "PING")
         {
-            std::string rest;
-            std::getline(iss, rest);
-            handlePingPong(client, rest);
+            iss >> args[1];
+            MessageServerToClient(client, "PONG " + args[1]);
         }
-        else if (command == "JOIN")
+        else if (args[0] == "JOIN")
         {
-            std::string channelName;
-            iss >> channelName;
-			iss >> password;
-            handleJoin(client, channelName, password);
+            iss >> args[1];
+			iss >> args[2];
+            handleJoin(client, args[1], args[2]);
         }
-        else if (command == "PRIVMSG")
+        else if (args[0] == "PRIVMSG")
         {
-            std::string channelNameOrNick;
-            std::string rest;
-            iss >> channelNameOrNick;
-            std::getline(iss, rest);
-            handlePrivmsg(client, channelNameOrNick, rest);
+            iss >> args[1];
+            std::getline(iss, args[2]);
+            handlePrivmsg(client, args[1], args[2]);
         }
-        else if (command == "NICK")
+        else if (args[0] == "NICK")
         {
-            std::string nick;
-            iss >> nick;
-            handleNick(client, nick);
+            iss >> args[1];
+            handleNick(client, args[1]);
         }
-		else if (command == "MODE")
+		else if (args[0] == "MODE")
         {
-			std::string channelName;
-            std::string rest;
-            iss >> channelName;
-            std::getline(iss, rest);
-			handleMode(client, channelName, rest);
+            iss >> args[1];
+            std::getline(iss, args[2]);
+			handleMode(client, args[1], args[2]);
         }
-        else if (command == "TOPIC")
+        else if (args[0] == "TOPIC")
         {
-			std::string channelName;
-			iss >> channelName;
-			std::string rest;
-			std::getline(iss, rest);
-			handleTopic(client, channelName, rest);
+			iss >> args[1];
+			std::getline(iss, args[2]);
+			handleTopic(client, args[1], args[2]);
         }
-          else if (command == "KICK")
+        else if (args[0] == "KICK")
         {
             handleKick(client, message);
         }
-        else if (command == "INVITE")
+        else if (args[0] == "INVITE")
         {
             handleInvite(client, message);
         }
-        else if (command == "QUIT")
+        else if (args[0] == "QUIT")
         {
             handleQuit(client, message);
         }
     }
 }
-
 
 /*
  * Split a string by a delimiter
@@ -144,7 +131,7 @@ std::vector<std::string> Server::SplitString(const std::string &str)
 
     while (it != end)
     {
-        if (!it->str().empty()) // To avoid adding empty strings
+        if (!it->str().empty())
         {
             tokens.push_back(*it);
         }

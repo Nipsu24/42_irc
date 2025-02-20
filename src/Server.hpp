@@ -23,7 +23,7 @@
 #include <cstdlib>
 
 const int BUFFER_SIZE = 1024;
-const int MAX_CLIENTS = 10;
+const int MAX_CLIENTS = 999;
 
 class Server
 {
@@ -99,10 +99,8 @@ public:
 
 private:
 
-	int							_port = 6667; // Example port
+	int							_port;
 	std::string					_passwd;
 	std::vector<Client *>		_clients;
 	std::vector<Channel *>		_channels;
 };
-
-void removeWhitespace(std::string &str);

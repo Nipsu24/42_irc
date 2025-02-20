@@ -18,7 +18,8 @@ int printErrorMessage(int errorFlag)
 {
 	if (errorFlag == 0)
 		std::cout << "Error." << std::endl
-				  << "Insufficient arguments, server needs <port> and <password>." << std::endl;
+				  << "Insufficient arguments, server needs <port> and <password>." << std::endl
+				  << "Example: ./ircserv 6667 password" << std::endl;
 	if (errorFlag == 1)
 		std::cout << "Error." << std::endl
 				  << "Invalid port number. Recommended ports are 6665 - 6669" << std::endl;
