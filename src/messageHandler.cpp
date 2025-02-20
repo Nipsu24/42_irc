@@ -27,6 +27,7 @@
  */
 void Server::MessageServerToClient(Client client, const std::string &message)
 {
+    std::cout << ">> " << message;
     std::string formattedMessage = message + "\r\n"; // IRC message format
     if (send(client.getFd(), formattedMessage.c_str(), formattedMessage.size(), 0) == -1)
     {
@@ -39,57 +40,34 @@ void Server::MessageServerToClient(Client client, const std::string &message)
  */
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
-    if (client.getState() == NOTREGISTERED)
+    std::cout << "<< " << message;
+ 
+    if (client.getState() != REGISTERED && client.passWordOk)
     {
         std::vector<std::string> tokens = SplitString(message);
-        
-        if (tokens.size() < 1)
+        for(unsigned int i = 0; i < tokens.size(); i ++)
         {
-            std::cerr << "Invalid message" << std::endl;
-            return;
-        }
-        int i = 0;
-        for (auto &token : tokens)
-        {
-            std::cout << "try: " << token << std::endl;
-            if (token == "CAP")
+            if (tokens[i] == "CAP")
             {
                 handleCAPs(client, tokens, i);
-                break;
             }
-            else if (token == "PASS")
+            if(tokens[i] == "PASS")
             {
-                std::cout << "pass here: " + token << std::endl;
                 handlePass(client, tokens, i);
-                break;
+                if(!client.passWordOk)
+                    return;
             }
-            else if (token == "USER" || token == "NICK")
+            if (tokens[i] == "NICK")
             {
-                std::cout << "here: " + token << std::endl;
-                MessageServerToClient(client, RPL_PASSWDREQUEST());
-                MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
-                removeClient(client.getFd());
-                close(client.getFd());
-            }
-        }
-    }
-    else if (client.getState() == REGISTERING)
-    {
-        
-        std::vector<std::string> tokens = SplitString(message);
-        int i = 0;
-        for (auto &token : tokens)
-        {
-            std::cout << "Client: " << client.getFd() << " Token: " << i << " " << token << std::endl; // Debugging cout to see the tokens
-            
-            if (token == "USER")
-                handleUserName(client, tokens, i);
-            if (token == "NICK")
-            {
-                std::cout << "SETNICK FIRST TIME: " + tokens[i + 1] << std::endl;
                 handleNick(client, tokens[i + 1]);
             }
-            i++;
+            if (tokens[i] == "USER")
+            {
+                if(client.passWordOk)
+                    handleUserName(client, tokens, i);
+                else
+                    return;
+            }
         }
     }
     else if (client.getState() == REGISTERED)

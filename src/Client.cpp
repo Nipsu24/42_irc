@@ -11,6 +11,7 @@
 /* **************************************************************************************** */
 
 #include "Client.hpp"
+#include <iostream>
 
 Client::Client() {}
 
@@ -18,6 +19,7 @@ Client::Client(int fd, const sockaddr_in &client_addr)
     : _fd(fd), _addr(client_addr), _nick("*"), _userName("") 
     {
         setState(NOTREGISTERED);
+        passWordOk = true;
     }
 
 Client::Client(const Client &other)

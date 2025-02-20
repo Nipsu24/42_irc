@@ -47,6 +47,7 @@ public:
     clientState getState() const;
     
     bool cap_status;
+    bool passWordOk;
 
 private:
     int _fd;

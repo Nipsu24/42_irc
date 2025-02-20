@@ -59,6 +59,7 @@ void Server::handleNick(Client &client, std::string nick)
 		MessageServerToClient(client, RPL_NICK(oldNick, client.getUsername(), client.getNick()));
 		if (client .getState() != REGISTERED)
 			MessageServerToClient(client, RPL_WELCOME(client.getNick()));
-		client.setState(REGISTERED);
+		else
+			client.setState(REGISTERED);
 	}
 }
