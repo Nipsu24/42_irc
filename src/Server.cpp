@@ -95,28 +95,3 @@ bool Server::clientExists(const std::string& nick){
 }
 
 
-void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, int index)
-{
-	std::string response;
-	if (tokens[index + 1] == "LS")
-	{
-		client.setState(REGISTERING);
-		std::cout << "Received CAP LS from client" << client.getFd() << ": " << client.getNick() << std::endl; // Debugging
-		response = "CAP * LS :multi-prefix sasl";
-		MessageServerToClient(client, response);
-		MessageServerToClient(client, RPL_PASSWDREQUEST());
-	}
-	else if (tokens[index + 1] == "REQ")
-	{
-		response = ":localhost CAP " + client.getNick() + " ACK :multi-prefix";
-		MessageServerToClient(client, response);
-	}
-	else if (tokens[index + 1] == "END")
-	{
-		MessageServerToClient(client, response);
-	}
-	else
-	{
-		std::cerr << "Invalid CAP message" << std::endl;
-	}
-}

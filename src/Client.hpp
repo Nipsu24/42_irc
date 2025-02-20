@@ -44,6 +44,9 @@ public:
     sockaddr_in getAddr() const;
     void setState(clientState state);
     clientState getState() const;
+    bool getPasswdOK();
+    void setPasswdOK(bool ok);
+    
     
     bool cap_status;
 
@@ -53,4 +56,5 @@ private:
     sockaddr_in _addr;
     std::string _nick;
     std::string _userName;
+    bool    _passwdOK;
 };
