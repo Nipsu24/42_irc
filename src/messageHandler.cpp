@@ -11,6 +11,7 @@
 /* **************************************************************************************** */
 
 #include "Server.hpp"
+#include "response.hpp"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -19,13 +20,14 @@
 #include <string_view>
 #include <regex>
 #include <vector>
+#include <stdexcept>
 
 /*
  * Handle events on the server
  */
 void Server::MessageServerToClient(Client client, const std::string &message)
 {
-    std::cout << ">> " << message;
+    std::cout << ">> " << message << std::endl;
     std::string formattedMessage = message + "\r\n";
     if (send(client.getFd(), formattedMessage.c_str(), formattedMessage.size(), 0) == -1)
     {
@@ -38,13 +40,13 @@ void Server::MessageServerToClient(Client client, const std::string &message)
 */
 void Server::handleClientMessage(Client &client, const std::string &message)
 {
-    std::cout << "<< " << message;
+    std::cout << "<< " << message << std::endl;
     if (client.getState() == REGISTERING)
     {
         std::vector<std::string> tokens = SplitString(message);
-        if (tokens.size() < 1)
+        if (tokens.size() < 2)
         {
-            std::cerr << "Invalid message" << std::endl;
+            MessageServerToClient(client, RPL_NICKREQUEST());
             return;
         }
         int i = 0;
