@@ -19,7 +19,10 @@
 #include <poll.h>
 #include <system_error>
 
-volatile sig_atomic_t		server_running; // For signal handeling
+/*
+    * Signal handler for SIGINT, SIGTERM, SIGQUIT, and SIGSEGV
+*/
+volatile sig_atomic_t		server_running;
 
 /*
     * Create a server socket
@@ -31,8 +34,6 @@ int Server::createServerSocket()
     {
         throw std::runtime_error("Socket operation failed: Connection refused");
     }
-
-    // Set socket options (SO_REUSEADDR)
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
     {
@@ -100,17 +101,13 @@ void Server::handleEvents(std::vector<struct pollfd> &fds)
             ssize_t bytes_read = recv(fds[i].fd, buffer, BUFFER_SIZE - 1, 0);
             if (bytes_read <= 0)
             {
-                // Client disconnected or error
                 std::cout << "Client disconnected." << std::endl;
                 close(fds[i].fd);
                 _clients.erase(_clients.begin() + i - 1);
-                //--i;
             }
             else
             {
-                // Null-terminate and process the received message
                 buffer[bytes_read] = '\0';
-                //std::cout << "Buffer: " << buffer << std::endl;
                 std::string message(buffer);
                 handleClientMessage(*_clients[i - 1], message);
             }
@@ -123,12 +120,12 @@ void Server::cleanupResources(int server_fd)
     for (auto &client : _clients)
     {
         close(client->getFd());
-        delete client; // Don't forget to delete the Client object if you're using raw pointers
+        delete client;
     }
     _clients.clear();
     for (auto &channel : _channels)
     {
-        delete channel; // Don't forget to delete the Client object if you're using raw pointers
+        delete channel; 
     }
     _channels.clear(); 
     close(server_fd);
@@ -146,7 +143,7 @@ void handle_sig(int sig)
 void HandleSignals()
 {
     server_running = 1;
-	signal(SIGINT, handle_sig);   // Handle Ctrl+C
+	signal(SIGINT, handle_sig);  // Handle Ctrl+C
     signal(SIGTERM, handle_sig); // Handle termination request (kill)
     signal(SIGQUIT, handle_sig); /* Handle Ctrl + \ */
     signal(SIGSEGV, handle_sig); // Handle segmentation fault
@@ -160,8 +157,8 @@ void Server::runServer()
     HandleSignals();
 
     std::vector<struct pollfd> fds;
-    // Main event loop
-    while (server_running)
+    // Main servere loop
+    while (server_running) // Run until server_running is set to 0
     {
         // Set up the poll structure
         fds.clear();
@@ -172,7 +169,6 @@ void Server::runServer()
         {
             fds.push_back({client->getFd(), POLLIN, 0});
         }
-
         int poll_result = poll(fds.data(), fds.size(), -1);
         if (poll_result == -1)
         {

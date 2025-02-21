@@ -41,8 +41,6 @@ Server& Server::operator=(const Server& other) {
 	return *this;
 }
 
-/*Destructor frees dynamically allocated channels. Uses '.clear'
-  at the end to avoid dangling pointers.*/
 Server::~Server() {}
 
 void Server::setPort(int value) {
@@ -68,8 +66,8 @@ void Server::addClient(Client* client) {
 void Server::removeClient(int fd) {
 	for (auto it = _clients.begin(); it != _clients.end(); ++it) {
 		if ((*it)->getFd() == fd) {
-			delete *it;  // Clean up memory
-			_clients.erase(it);  // Remove from vector
+			delete *it;
+			_clients.erase(it);
 			break;
 		}
 	}
@@ -83,7 +81,6 @@ bool Server::checkIfChannelExists(const std::string& channelName) {
     }
     return false;
 }
-
 
 bool Server::clientExists(const std::string& nick){
 	for (Client* client : _clients)
