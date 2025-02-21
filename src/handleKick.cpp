@@ -49,7 +49,6 @@ void Server::handleKick(Client &client, std::string message)
 		if (reason[0] == ':')
 			reason.erase(0, 1);
 	}
-	//Channel handles this
 	try{
 		getChannelByChannelName(channelName)->setKick(&client, channelName, nick);
 		if (reasonExist == true)

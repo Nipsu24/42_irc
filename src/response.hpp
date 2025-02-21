@@ -65,7 +65,7 @@
 
 
 /* Command Responses */
-#define RPL_INVITING(clientnick, nick, channelname)		":" + clientnick + " INVITE " + nick + " " + channelname
+#define RPL_INVITING(clientnick, nick, channelname)		"341 " + clientnick + " " + nick + " " + channelname
 #define RPL_NICK(oldnick, username, nick)				":" + oldNick + " NICK :" + nick
 #define RPL_TOPIC(clientnick, channelname, newtopic)	":" + clientnick + " TOPIC " + channelName + " " + newtopic
 #define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel

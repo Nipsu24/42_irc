@@ -84,11 +84,8 @@ bool	Server::checkForValidModes(const std::string& message, Client& client, Chan
 	}
 	if (neededParameterCount > 0) {
 		std::vector<std::string> parameter(neededParameterCount);
-		for (int i = 0; i < neededParameterCount; i++) {
+		for (int i = 0; i < neededParameterCount; i++)
 			iss >> parameter[i];
-			std::cout << "PARAMETERS " << parameter[i] << std::endl;
-
-		}
 		for (char c : modes) {
 			if (c == '+' || c == '-')
 				currentSign = c;
@@ -151,6 +148,6 @@ void Server::handleMode(Client& client, const std::string& channelName, const st
 			return ;
 		}
 		if (checkForValidModes(message, client, channel))
-				executeModes(client, channel);
+			executeModes(client, channel);
 	}
 }

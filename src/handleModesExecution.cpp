@@ -150,8 +150,7 @@ void	Server::executeModes(Client& client, Channel* channel)
 	setModes = compressModes(setModes);
 	response = ":" + client.getNick() + " " + "Mode" + " " + channel->getChannelName() + " " + setModes;
 	if (!setParameters.empty())
-	response += " " + setParameters;
-	std::cout << "Message to client: " << response << std::endl;
+		response += " " + setParameters;
 	for (Client *member : channel->getUsers())
 		MessageServerToClient(*member, response);
 }
