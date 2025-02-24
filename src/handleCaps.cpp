@@ -12,13 +12,6 @@
 
 #include "Server.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <cstring>
-#include <vector>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <poll.h>
-#include <system_error>
 
 /*Checks whether CAPS and related string parameters are received correctly and if on receiving 'END' required
   fields NICK, USER and PASSWORD are filled by client*/

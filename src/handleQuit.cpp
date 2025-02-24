@@ -12,7 +12,6 @@
 
 #include "Server.hpp"
 #include "Channel.hpp"
-#include <iostream>
 
 void Server::handleQuit(Client &client, std::string message)
 {

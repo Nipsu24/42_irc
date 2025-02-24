@@ -14,13 +14,12 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
 
 void Server::handlePrivmsg(Client &client, const std::string channelNameOrNick,  std::string &message)
 {    
     message.erase(0, message.find_first_not_of(' '));
 	message.erase(message.find_last_not_of(" \n\r\t")+1);
-    if (channelNameOrNick[0] == '#')            //message to whole channel
+    if (channelNameOrNick[0] == '#')
     {
         for (Channel *channel : _channels)
         {
@@ -37,7 +36,7 @@ void Server::handlePrivmsg(Client &client, const std::string channelNameOrNick, 
         }
     }
     else
-    {   //private message
+    {
         for (Client *_client : _clients)
         {
             if (_client->getNick() == channelNameOrNick)

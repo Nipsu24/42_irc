@@ -12,9 +12,8 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
 #include "Client.hpp"
+#include <vector>
 #include <functional>
 
 class Client;

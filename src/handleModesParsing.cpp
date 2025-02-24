@@ -12,12 +12,13 @@
 
 #include "Channel.hpp"
 #include "Server.hpp"
+#include "Client.hpp"
+#include "response.hpp"
 #include <algorithm>
 #include <iostream>
 #include <unordered_set>
 #include <sstream>
-#include "Client.hpp"
-#include "response.hpp"
+
 
 /*Helper function of checkForValidModes, cheks if all strings of vector are all filled, if parameter for l mode only
   consists of digits and if parameter for o contains user which is existing at all and if he is member of the channel*/
