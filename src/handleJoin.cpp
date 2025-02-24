@@ -13,10 +13,7 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <string>
 #include <sstream>
-#include <algorithm>
 
 /*Adds user(client) to a channel or creates new channel in case channel is not yet existing.
   First checks if channel name already exists in vector array of _channels. If this is the case,

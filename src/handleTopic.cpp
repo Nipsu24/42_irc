@@ -13,10 +13,7 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <string>
 #include <sstream>
-#include <algorithm>
 
 /*Checks if conditions for setting topic are met and if this is the case, sets respective
   topic for channel. First trims topic message string end from by any white space, then checks if 

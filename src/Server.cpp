@@ -12,14 +12,6 @@
 
 #include "Server.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <cstring>
-#include <vector>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <poll.h>
-#include <system_error>
-
 
 Server::Server() {}
 

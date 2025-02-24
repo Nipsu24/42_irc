@@ -13,8 +13,6 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <string>
 #include <sstream>
 #include <algorithm>
 

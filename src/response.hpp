@@ -14,10 +14,6 @@
 
 #include "Channel.hpp"
 #include <iostream>
-#include <string>
-#include <cstdlib>
-#include <cstdio>
-#include <time.h>
 
 //nick
 #define ERR_NOSUCHNICK(nick, nicktofind)                            "401 " + nick + " " + nicktofind + " :No such nick/channel"

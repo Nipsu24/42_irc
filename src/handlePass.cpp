@@ -13,12 +13,7 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <string>
-#include <sstream>
 #include <algorithm>
-#include <vector>
-#include <arpa/inet.h>
 
 void Server::handlePass(Client &client, const std::vector<std::string>& tokens, int index)
 {
@@ -30,10 +25,10 @@ void Server::handlePass(Client &client, const std::vector<std::string>& tokens, 
 	}
 	else
 	{
+		std::cout << "wrong password" << std::endl;
 		MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
 		close(client.getFd());
 		_clients.erase(std::remove_if(_clients.begin(), _clients.end(),
 		[&](Client* c) { return c->getFd() == client.getFd(); }), _clients.end());
 	}
-		
 }

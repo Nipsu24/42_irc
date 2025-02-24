@@ -13,10 +13,7 @@
 #include "Server.hpp"
 #include "Channel.hpp"
 #include "response.hpp"
-#include <iostream>
-#include <string>
 #include <sstream>
-#include <algorithm>
 
 /*Handles invite of a user to a channel. First checks whether channel and client exists, then
   sends invite in case respective parameters such as inviter is operator, in the channel and

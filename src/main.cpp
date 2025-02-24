@@ -10,9 +10,8 @@
 /*                                                                                          */
 /* **************************************************************************************** */
 
-#include <iostream>
-#include <string>
 #include "Server.hpp"
+#include <iostream>
 
 int printErrorMessage(int errorFlag)
 {

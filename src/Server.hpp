@@ -12,15 +12,12 @@
 
 #pragma once
 
-#include <string>
-#include <netinet/in.h>
-#include <vector>
 #include "Client.hpp"
 #include "Channel.hpp"
-
+#include <vector>
 #include <signal.h>
-#include <unistd.h>
-#include <cstdlib>
+#include <iostream>
+
 
 const int BUFFER_SIZE = 1024;
 const int MAX_CLIENTS = 999;
@@ -59,17 +56,13 @@ public:
 	// handleCommands.cpp
 	void						handleCAPs(Client &client, const std::vector<std::string>& tokens, int index);
 	void						handlePass(Client &client, const std::vector<std::string>& tokens, int index);
-	//void						handleCapReq(Client &client, std::vector<std::string> tokens, int index);
 	void						handleUserName(Client &client, std::vector<std::string> tokens, int index);
 
 	void						handleJoin(Client &client, std::string channelName, std::string password);
 	void						handlePart(Client &client, std::vector<std::string> tokens, int index);
 	void						handlePrivmsg(Client &client, std::string channelNameOrNick, std::string &message);
 	
-	// void handlePrivmsg(Client &client, std::vector<std::string> tokens, int index, const std::string &message);
 	void						handleNick(Client &client, std::string nick);
-	void						handlePingPong(Client &client, std::string rest);
-
 	// channel handles these
 	void						handleKick(Client &client, std::string message);
 	void						handleTopic(Client &client, const std::string& channelName, std::string message);

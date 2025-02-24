@@ -11,11 +11,10 @@
 /* **************************************************************************************** */
 
 #include "Channel.hpp"
+#include "Client.hpp"
 #include "Server.hpp"
 #include <algorithm>
-#include <iostream>
-#include <sstream>
-#include "Client.hpp"
+
 
 /*THESE FUNCTIONS ARE USED IN THE CONTEXT OF CHANNEL MODES HANDLING*/
 

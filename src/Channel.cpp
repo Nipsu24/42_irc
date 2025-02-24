@@ -10,14 +10,10 @@
 /*                                                                                          */
 /* **************************************************************************************** */
 
-#include <iostream>
-#include <algorithm>
-#include <sstream>
 #include "Channel.hpp"
-#include <chrono>
-#include <ctime>
-#include <functional>
 #include "response.hpp"
+#include <algorithm>
+#include <chrono>
 
 /* ************************************************Constructor Section START*************************************** */
 Channel::Channel() {}
