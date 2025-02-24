@@ -26,7 +26,7 @@ Server::Server(const Server& other) {
 }
 
 Server& Server::operator=(const Server& other) {
-	if (this != &other) {  // Self-assignment check
+	if (this != &other) {
 		this->_port = other._port;
 		this->_passwd = other._passwd;
 	}

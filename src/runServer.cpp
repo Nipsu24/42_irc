@@ -15,14 +15,11 @@
 #include <poll.h>
 #include <system_error>
 
-/*
-	* Signal handler for SIGINT, SIGTERM, SIGQUIT, and SIGSEGV
-*/
+/*Signal handler for SIGINT, SIGTERM, SIGQUIT, and SIGSEGV*/
 volatile sig_atomic_t		server_running;
 
-/*
-	* Create a server socket
-*/
+/*Creates a server socket (AF_INET for IPv4), with tcp socket type (SOCK_STREAM) and sets socket
+  options (SO_REUSEADDR for being able to reuse address and port if in time_wait state)*/
 int Server::createServerSocket()
 {
 	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,9 +36,8 @@ int Server::createServerSocket()
 	return server_fd;
 }
 
-/*
-	* Bind and listen on the server socket
-*/
+/*Binds and listens on the server socket. Defines and stores server's socket address, uses INADDR_ANY
+  to avoid binding to a particular IP but instead make server listen to all available IPs*/
 void Server::bindAndListen(int server_fd)
 {
 	sockaddr_in server_addr = {};
@@ -65,9 +61,7 @@ void Server::bindAndListen(int server_fd)
 	std::cout << "Server is listening on port " << _port << "..." << std::endl;
 }
 
-/*
-	* Handle a new client connection
-*/
+/*Handle a new client connection*/
 void Server::handleNewClient(int server_fd)
 {
 	
@@ -84,9 +78,9 @@ void Server::handleNewClient(int server_fd)
 	_clients.back()->setState(REGISTERING);
 }
 
-/*
-	* Handle events on the server socket and client sockets
-*/
+/*Handles events on the server socket and client sockets, using revents (indicating which event
+  occured on the file descriptor) and POLLIN (readable data available). Uses recv to read data
+  from client socket and stores it in buffer for further processing.*/
 void Server::handleEvents(std::vector<struct pollfd> &fds)
 {
 	for (size_t i = 1; i < fds.size(); ++i)
@@ -145,6 +139,12 @@ void HandleSignals()
 	signal(SIGSEGV, handle_sig); 
 }
 
+/*Adds each server socket and each client socket to list of monitored fds and sets POLLIN respectively
+  for checking incoming data. Uses poll() system call for monitoring multiple fds(sockets) simultaneaously.
+  It checks whether one or more fds are ready for I/O operations otherwise blocks system until readyness.
+  If poll not successful as disrupted by signal, skips rest of loop with continue for next iteration.
+  If successful, uses revents and POLLIN for server socket, checking that a new event occured and
+  that a new connection is ready to be accepted. Events on client sockets handled by handleEvents method.*/
 void Server::runServer()
 {
 
