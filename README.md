@@ -24,7 +24,7 @@ Worksplit (partly overlapping):
 
 Matti: Client-Server Communication MVP · Private messages · Commands: Join · Signals
   
-Timo: Overall architecture · Commands: Join, Kick, Topic, Invite · Private messages · Signals · Testing, bugfixing
+Timo: Overall architecture · Commands: Join, Kick, Topic, Invite, Nick · Private messages · Signals · Testing, bugfixing
   
 Marius: Channels & modes · Commands: Join, Kick, Topic, Invite · Testing, bugfixing
 
@@ -32,7 +32,9 @@ Marius: Channels & modes · Commands: Join, Kick, Topic, Invite · Testing, bugf
 The server utelises C++ socket programming in order to create a TCP socket which operates over IP4. The server binds to the socket and furhter listens to incoming connection requests of clients. 
 The following user commands are handled from the server:
  - JOIN
+ - NICK
  - INVITE
+ - MSG
  - KICK
  - TOPIC
  - MODE
@@ -75,6 +77,15 @@ $ /connect localhost 9090
 `JOIN` a channel:
 ```
 /join <made_up_channel>
+```
+change `nickname`
+```
+/nick <nickname>
+```
+Send `private message` (recipient can change window to private message with cntrl + p)
+```
+/msg <nickname of recipient> <message>
+
 ```
 set `MODE` (if channel operator)
 ```
