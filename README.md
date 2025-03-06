@@ -74,20 +74,23 @@ $ /connect localhost 9090
 ```
 
 ### 3. Navigation within the IRC
-`JOIN` a channel:
+`Join` a channel:
 ```
-/join <made_up_channel>
+/join <channel_name>
 ```
-change `nickname`
+Change `nickname`:
 ```
 /nick <nickname>
 ```
-Send `private message` (recipient can change window to private message with cntrl + p)
+`Invite` user to join channel:
 ```
-/msg <nickname of recipient> <message>
-
+/invite <nickname_of_invitee>
 ```
-set `MODE` (if channel operator)
+Send `private message` (recipient can change window to private message with cntrl + p):
+```
+/msg <nickname_of_recipient> <message>
+```
+Set `mode` (if channel operator):
 ```
 /mode +t
 /mode +i
@@ -95,12 +98,12 @@ set `MODE` (if channel operator)
 /mode +l <channel_user_limit>
 /mode +o <channel_member>
 ```
-set `TOPIC` of a channel
+Set `topic` of a channel:
 ```
 /topic <channel_topic>
 ```
 
-`KICK` users from channels (if channel operator)
+`Kick` users from channels (if channel operator):
 ```
 /kick <channel_member>
 ```
