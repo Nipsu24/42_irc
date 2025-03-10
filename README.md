@@ -1,6 +1,3 @@
-
-<h3 align="center" style="color:red;">!🤖 SERVER CURRENTLY STILL IN DEVELOPMENT - WORK IN PROGRESS 🤖!</h3>
-
 <h1 align="center">Internet Relay Chat Server (IRC)</h1>
 
 > Hive Helsinki (School 42) 13th project (Rank05/06) of core curriculum.
