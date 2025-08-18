@@ -67,7 +67,7 @@ $ irssi
 ```
 Establish a connection to the server within irssi with the following command (port number used from example above):
 ```
-$ /connect localhost 9090
+$ /connect localhost 9090 1234
 ```
 
 ### 3. Navigation within the IRC
