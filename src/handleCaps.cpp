@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "response.hpp"
+#include <unistd.h>
 
 /*Checks whether CAPS and related string parameters are received correctly and if on receiving 'END' required
   fields NICK, USER and PASSWORD are filled by client*/

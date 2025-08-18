@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <poll.h>
 #include <system_error>
+#include <unistd.h>
 
 /*Signal handler for SIGINT, SIGTERM, SIGQUIT, and SIGSEGV*/
 volatile sig_atomic_t		server_running;

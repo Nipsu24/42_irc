@@ -14,6 +14,7 @@
 #include "Channel.hpp"
 #include "response.hpp"
 #include <algorithm>
+#include <unistd.h>
 
 void Server::handlePass(Client &client, const std::vector<std::string>& tokens, int index)
 {
