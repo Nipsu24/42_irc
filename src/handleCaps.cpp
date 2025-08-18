@@ -29,30 +29,30 @@ void Server::handleCAPs(Client &client, const std::vector<std::string>& tokens, 
 	}
 	else if (tokens[index + 1] == "END") {
 		std::cout << "END sended" << std::endl;
-		if (!client.getPasswdOK()) {
-			MessageServerToClient(client, RPL_PASSWDREQUEST());
-			MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
-			close(client.getFd());
-			removeClient(client.getFd());
-			return;
-		}
-		else if (!client.getNickOK()) {
-			MessageServerToClient(client, RPL_NICKREQUEST());
-			MessageServerToClient(client, ERR_NONICKNAMEGIVEN());
-			close(client.getFd());
-			removeClient(client.getFd());
-			return;
-		}
-		else if (!client.getUserNameOK()) {
-			MessageServerToClient(client, RPL_USERNAMEREQUEST());
-			close(client.getFd());
-			removeClient(client.getFd());
-			return;
-		}
-		else {
+		// if (!client.getPasswdOK()) {
+		// 	MessageServerToClient(client, RPL_PASSWDREQUEST());
+		// 	MessageServerToClient(client, ERR_PASSWDMISMATCH(client.getNick()));
+		// 	close(client.getFd());
+		// 	removeClient(client.getFd());
+		// 	return;
+		// }
+		// else if (!client.getNickOK()) {
+		// 	MessageServerToClient(client, RPL_NICKREQUEST());
+		// 	MessageServerToClient(client, ERR_NONICKNAMEGIVEN());
+		// 	close(client.getFd());
+		// 	removeClient(client.getFd());
+		// 	return;
+		// }
+		// else if (!client.getUserNameOK()) {
+		// 	MessageServerToClient(client, RPL_USERNAMEREQUEST());
+		// 	close(client.getFd());
+		// 	removeClient(client.getFd());
+		// 	return;
+		// }
+		// else {
 			client.setState(REGISTERED);
 			MessageServerToClient(client, RPL_WELCOME(client.getNick()));
-		}	
+		// }	
 	}
 	else
 		std::cerr << "Invalid CAP message" << std::endl;
